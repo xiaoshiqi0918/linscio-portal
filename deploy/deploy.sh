@@ -77,7 +77,7 @@ deploy_migrate() {
 deploy_nginx() {
     log "Deploying nginx configs..."
 
-    NGINX_CONF_DIR="/etc/nginx/conf.d"
+    NGINX_CONF_DIR="${NGINX_CONF_DIR:-/www/server/panel/vhost/nginx}"
     DEPLOY_NGINX_DIR="$REPO_DIR/deploy/nginx"
 
     for conf in "$DEPLOY_NGINX_DIR"/*.conf; do
