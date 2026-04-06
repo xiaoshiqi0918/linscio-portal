@@ -1,3 +1,4 @@
+import logging
 from datetime import datetime
 
 from fastapi import APIRouter, Depends
@@ -9,6 +10,16 @@ from app.models.user_license import UserLicense
 from app.models.specialty_version_policy import SpecialtyVersionPolicy
 from app.schemas.update import CheckUpdateRequest, CheckUpdateResponse, SpecialtyUpdateInfo, BundleUpdateInfo
 from app.services.cos import generate_presigned_download_url, read_manifest
+
+logger = logging.getLogger(__name__)
+
+
+def _safe_presigned_url(cos_key: str, expires: int = 86400) -> str | None:
+    try:
+        return generate_presigned_download_url(cos_key, expires=expires)
+    except Exception:
+        logger.warning("Failed to generate presigned URL for %s", cos_key)
+        return None
 
 router = APIRouter(prefix="/api/update", tags=["update"])
 
@@ -70,7 +81,7 @@ async def check_update(
             ext = platform_ext.get(req.platform, "dmg")
             filename = f"LinScio-MedComm-{latest_version}-{req.platform}.{ext}"
         cos_key = f"releases/{canonical_id}/v{latest_version}/{filename}"
-        download_url = generate_presigned_download_url(cos_key, expires=86400)
+        download_url = _safe_presigned_url(cos_key)
 
         update_files = (prod_matched or {}).get("update_files") or {}
         uf = update_files.get(req.platform) or {}
@@ -79,7 +90,7 @@ async def check_update(
             update_size_bytes = uf.get("size_bytes", 0)
             update_sha256 = uf.get("sha256", "")
             uf_cos_key = f"releases/{canonical_id}/v{latest_version}/{update_filename}"
-            update_download_url = generate_presigned_download_url(uf_cos_key, expires=86400)
+            update_download_url = _safe_presigned_url(uf_cos_key)
 
         release_notes = (prod_matched or {}).get("release_notes")
 
