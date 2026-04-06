@@ -58,25 +58,25 @@
       "product_id": "MedComm",
       "name": "ComfyUI 基础绘图组件包",
       "type": "basic",
-      "version": "0.1.0",
-      "min_client_version": "0.2.0",
+      "version": "0.3.10",
+      "min_client_version": "0.1.1",
       "description": "ComfyUI 引擎 + SD1.5 基础模型 + 预设工作流",
       "authorization": "included",
       "platforms": {
         "mac-arm64": {
-          "filename": "comfyui-bundle-0.1.0-mac-arm64.zip",
+          "filename": "comfyui-bundle-0.3.10-mac-arm64.zip",
           "size_bytes": 0,
           "sha256": ""
         },
         "win-x64": {
-          "filename": "comfyui-bundle-0.1.0-win-x64.zip",
+          "filename": "comfyui-bundle-0.3.10-win-x64.zip",
           "size_bytes": 0,
           "sha256": ""
         }
       },
       "changelog": [
         {
-          "version": "0.1.0",
+          "version": "0.3.10",
           "changes": ["首版发布：ComfyUI 0.3.10 + SD1.5 模型 + 7 种预设场景工作流"]
         }
       ]
