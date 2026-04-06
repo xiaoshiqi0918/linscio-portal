@@ -39,6 +39,17 @@ def read_manifest() -> dict:
         return {"specialties": []}
 
 
+def generate_presigned_download_url(key: str, expires: int = 3600) -> str:
+    """Generate a pre-signed URL for downloading a file from the releases bucket."""
+    settings = get_settings()
+    client = _get_client()
+    return client.get_presigned_download_url(
+        Bucket=settings.COS_BUCKET_RELEASES,
+        Key=key,
+        Expired=expires,
+    )
+
+
 def list_release_files(prefix: str = "releases/") -> list[dict]:
     """List files under releases bucket."""
     settings = get_settings()

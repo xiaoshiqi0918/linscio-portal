@@ -6,6 +6,7 @@ class StatsOverview(BaseModel):
     active_licenses: int = 0
     expiring_soon: int = 0
     monthly_downloads: int = 0
+    monthly_bundle_downloads: int = 0
     monthly_specialty_downloads: int = 0
     download_success_rate: float = 0.0
 
@@ -15,6 +16,7 @@ class GenerateLicenseRequest(BaseModel):
     license_type: str  # 'basic' | 'specialty'
     count: int = 1
     duration_months: int | None = None
+    duration_days: int | None = None
     is_trial: bool = False
     specialty_ids: list[str] | None = None
     recipient_note: str | None = None
@@ -26,6 +28,10 @@ class GenerateLicenseResponse(BaseModel):
 
 
 class BanUserRequest(BaseModel):
+    reason: str | None = None
+
+
+class DeleteUserRequest(BaseModel):
     reason: str | None = None
 
 

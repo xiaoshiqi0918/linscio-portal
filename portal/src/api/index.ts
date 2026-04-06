@@ -1,5 +1,7 @@
 import axios from 'axios'
 
+import { clearPortalEmailCookie } from '@/utils/portalIdentityCookie'
+
 const api = axios.create({
   baseURL: import.meta.env.VITE_API_BASE || '',
   timeout: 30000,
@@ -18,7 +20,13 @@ api.interceptors.response.use(
   (err) => {
     if (err.response?.status === 401) {
       localStorage.removeItem('session_token')
-      window.location.href = '/login'
+      localStorage.removeItem('is_admin')
+      localStorage.removeItem('user_email')
+      clearPortalEmailCookie()
+      const currentPath = window.location.pathname
+      if (currentPath !== '/login') {
+        window.location.href = `/login?redirect=${encodeURIComponent(currentPath)}`
+      }
     }
     return Promise.reject(err)
   },
@@ -48,6 +56,9 @@ export const licenseStatusAll = () =>
 // Products
 export const getProducts = () => api.get('/api/products')
 
+// User specialties
+export const getUserSpecialties = () => api.get('/api/license/specialties')
+
 // Download
 export const downloadSoftware = (data: { product_id: string; platform: string }) =>
   api.post('/api/download/software', data)
@@ -63,3 +74,5 @@ export const changePhone = (data: { phone: string }) =>
   api.patch('/api/account/phone', data)
 export const deleteAccount = (data: { password: string }) =>
   api.delete('/api/account', { data })
+export const requestMigration = (data: { new_email: string; password: string; reason?: string }) =>
+  api.post('/api/account/migration', data)

@@ -18,4 +18,7 @@ class AdminLog(Base):
     client_ip: Mapped[str | None] = mapped_column(String(45))
     created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
 
-    __table_args__ = (Index("idx_admin_created", "admin_user_id", "created_at"),)
+    __table_args__ = (
+        Index("idx_admin_created", "admin_user_id", "created_at"),
+        Index("idx_admin_log_created_at", "created_at"),
+    )

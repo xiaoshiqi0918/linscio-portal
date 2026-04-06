@@ -18,6 +18,7 @@ from app.schemas.device import (
     DeviceVerifyRequest,
     DeviceVerifyResponse,
 )
+from app.services.email import send_device_activation_notice
 
 router = APIRouter(prefix="/api/device", tags=["device"])
 
@@ -106,6 +107,7 @@ async def verify_change_code(
     old_name = lic.device_name
 
     lic.access_token = None
+    lic.token_created_at = None
     lic.device_fingerprint = dcc.new_fingerprint
     lic.device_name = dcc.new_device_name
     lic.rebind_count += 1
@@ -134,9 +136,16 @@ async def verify_change_code(
     db.add(ActivationCode(
         code=ac_code, user_id=user.id, product_id=req.product_id,
         device_fingerprint=dcc.new_fingerprint,
-        expires_at=now + timedelta(seconds=30),
+        expires_at=now + timedelta(minutes=5),
     ))
     db.commit()
+
+    await send_device_activation_notice(
+        email=user.email,
+        product=req.product_id,
+        device_name=dcc.new_device_name or "未知设备",
+        activated_at=now.strftime("%Y-%m-%d %H:%M"),
+    )
 
     return DeviceVerifyResponse(
         new_device_name=dcc.new_device_name,

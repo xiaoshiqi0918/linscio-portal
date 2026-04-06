@@ -24,12 +24,12 @@ def cleanup_expired_records() -> None:
         one_day_ago = now - timedelta(days=1)
 
         deleted = db.query(ActivationCode).filter(
-            ActivationCode.created_at < one_day_ago
+            ActivationCode.expires_at < now
         ).delete()
         logger.info("Cleaned %d expired activation_codes", deleted)
 
         deleted = db.query(DeviceChangeCode).filter(
-            DeviceChangeCode.created_at < one_day_ago
+            DeviceChangeCode.expires_at < now
         ).delete()
         logger.info("Cleaned %d expired device_change_codes", deleted)
 
@@ -79,7 +79,7 @@ def send_expiry_reminders() -> None:
         for lic, user in licenses:
             days_remaining = (lic.expires_at - now).days
             try:
-                loop.run_until_complete(
+                ok = loop.run_until_complete(
                     send_expiry_reminder(
                         email=user.email,
                         product=lic.product_id,
@@ -87,8 +87,11 @@ def send_expiry_reminders() -> None:
                         days=days_remaining,
                     )
                 )
-                user.email_notified_7d = now
-                db.commit()
+                if ok:
+                    user.email_notified_7d = now
+                    db.commit()
+                else:
+                    logger.warning("Expiry reminder email not sent for %s", user.email)
             except Exception:
                 logger.exception("Failed to send expiry reminder to %s", user.email)
         loop.close()

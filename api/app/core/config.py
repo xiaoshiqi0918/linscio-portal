@@ -1,5 +1,7 @@
-from pydantic_settings import BaseSettings
 from functools import lru_cache
+from urllib.parse import quote_plus
+
+from pydantic_settings import BaseSettings
 
 
 class Settings(BaseSettings):
@@ -23,7 +25,7 @@ class Settings(BaseSettings):
     COS_REGION: str = "ap-shanghai"
 
     # CDN
-    CDN_DOMAIN_RELEASES: str = "releases.linscio.com.cn"
+    CDN_DOMAIN_RELEASES: str = "linscio-releases-1363203425.cos.ap-shanghai.myqcloud.com"
     CDN_DOMAIN_SPECIALTIES: str = "cdn.linscio.com.cn"
     CDN_AUTH_SECRET: str = ""
 
@@ -44,8 +46,11 @@ class Settings(BaseSettings):
     def database_url(self) -> str:
         if self.DATABASE_URL:
             return self.DATABASE_URL
+        # quote user/password so @ : / ? # in passwords do not break the URL
+        u = quote_plus(self.DB_USER, safe="")
+        p = quote_plus(self.DB_PASSWORD, safe="")
         return (
-            f"mysql+pymysql://{self.DB_USER}:{self.DB_PASSWORD}"
+            f"mysql+pymysql://{u}:{p}"
             f"@{self.DB_HOST}:{self.DB_PORT}/{self.DB_NAME}"
             "?charset=utf8mb4"
         )

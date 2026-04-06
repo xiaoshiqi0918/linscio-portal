@@ -1,0 +1,241 @@
+{
+  "schema_version": "2.0",
+  "min_client_version": "0.1.1",
+  "products": [
+    {
+      "id": "MedComm",
+      "name": "LinScio MedComm",
+      "latest_version": "0.1.1",
+      "published_at": "2026-04-04",
+      "release_notes": "新增 MedPic 医学绘图模块（ComfyUI 集成）、AI 智能提示词、修复多项已知问题",
+      "platforms": ["mac-arm64", "win-x64"],
+      "platform_status": {
+        "mac-arm64": "available",
+        "mac-x64": "suspended",
+        "win-x64": "available"
+      },
+      "download_files": {
+        "mac-arm64": "LinScio-MedComm-0.1.1-mac-arm64.dmg",
+        "win-x64": "LinScio-MedComm-0.1.1-win-x64.exe"
+      },
+      "update_files": {
+        "mac-arm64": {
+          "filename": "LinScio-MedComm-0.1.1-mac-arm64.zip",
+          "size_bytes": 0,
+          "sha256": ""
+        },
+        "win-x64": {
+          "filename": "LinScio-MedComm-0.1.1-win-x64.exe",
+          "size_bytes": 0,
+          "sha256": ""
+        }
+      },
+      "system_requirements": {
+        "mac": { "os_min": "macOS 12", "chip": "Apple Silicon", "ram_min": "8 GB", "disk_min": "500 MB" },
+        "win": { "os_min": "Windows 10", "arch": "x64", "ram_min": "8 GB", "disk_min": "500 MB" }
+      },
+      "changelog": [
+        {
+          "version": "0.1.1",
+          "changes": [
+            "新增 MedPic 医学绘图模块（ComfyUI 本地引擎集成）",
+            "新增 AI 智能提示词生成与优化",
+            "修复 Apple Silicon 黑图问题（全 fp32 计算）",
+            "修复版本更新检测产品 ID 匹配问题",
+            "统一安装包命名格式"
+          ]
+        },
+        {
+          "version": "0.1.0",
+          "changes": ["首版发布"]
+        }
+      ]
+    }
+  ],
+  "bundles": [
+    {
+      "id": "comfyui-basic",
+      "product_id": "MedComm",
+      "name": "ComfyUI 基础绘图组件包",
+      "type": "basic",
+      "version": "0.1.0",
+      "min_client_version": "0.2.0",
+      "description": "ComfyUI 引擎 + SD1.5 基础模型 + 预设工作流",
+      "authorization": "included",
+      "platforms": {
+        "mac-arm64": {
+          "filename": "comfyui-bundle-0.1.0-mac-arm64.zip",
+          "size_bytes": 0,
+          "sha256": ""
+        },
+        "win-x64": {
+          "filename": "comfyui-bundle-0.1.0-win-x64.zip",
+          "size_bytes": 0,
+          "sha256": ""
+        }
+      },
+      "changelog": [
+        {
+          "version": "0.1.0",
+          "changes": ["首版发布：ComfyUI 0.3.10 + SD1.5 模型 + 7 种预设场景工作流"]
+        }
+      ]
+    }
+  ],
+  "specialties": [
+    {
+      "id": "endocrinology",
+      "product_id": "MedComm",
+      "name": "内分泌科专包",
+      "category": "specialty",
+      "version": "1.0.0",
+      "description": "内分泌科专业术语库、科普示例库、参考文献",
+      "includes": [
+        "内分泌科专业术语库（800+ 条）",
+        "糖尿病/甲状腺等科普示例",
+        "内分泌科参考文献库"
+      ],
+      "full_package": {
+        "filename": "endocrinology-1.0.0-full.zip",
+        "size_mb": 120,
+        "size_bytes": 125829120,
+        "sha256": ""
+      },
+      "changelog": [
+        {
+          "version": "1.0.0",
+          "changes": ["首版发布：术语库 + 科普示例 + 参考文献"]
+        }
+      ]
+    },
+    {
+      "id": "cardiology",
+      "product_id": "MedComm",
+      "name": "心血管科专包",
+      "category": "specialty",
+      "version": "1.0.0",
+      "description": "心血管科专业术语库、科普示例库、参考文献",
+      "includes": [
+        "心血管科专业术语库（900+ 条）",
+        "高血压/冠心病等科普示例",
+        "心血管科参考文献库"
+      ],
+      "full_package": {
+        "filename": "cardiology-1.0.0-full.zip",
+        "size_mb": 150,
+        "size_bytes": 157286400,
+        "sha256": ""
+      },
+      "changelog": [
+        {
+          "version": "1.0.0",
+          "changes": ["首版发布：术语库 + 科普示例 + 参考文献"]
+        }
+      ]
+    },
+    {
+      "id": "neurology",
+      "product_id": "MedComm",
+      "name": "神经科专包",
+      "category": "specialty",
+      "version": "1.0.0",
+      "description": "神经科专业术语库、科普示例库、参考文献",
+      "includes": [
+        "神经科专业术语库（700+ 条）",
+        "脑卒中/帕金森等科普示例",
+        "神经科参考文献库"
+      ],
+      "full_package": {
+        "filename": "neurology-1.0.0-full.zip",
+        "size_mb": 130,
+        "size_bytes": 136314880,
+        "sha256": ""
+      },
+      "changelog": [
+        {
+          "version": "1.0.0",
+          "changes": ["首版发布：术语库 + 科普示例 + 参考文献"]
+        }
+      ]
+    }
+  ],
+  "drawing_packs": [
+    {
+      "id": "medpic-sdxl-pro",
+      "product_id": "MedComm",
+      "name": "MedPic SDXL 进阶包",
+      "category": "drawing",
+      "version": "1.0.0",
+      "description": "SDXL 基底模型 + 医学插画/扁平风格 LoRA + 全场景工作流模板",
+      "includes": [
+        "SDXL Base 1.0 模型",
+        "medpic_style_illustration_xl LoRA",
+        "medpic_style_flat_xl LoRA",
+        "标准档全场景工作流模板",
+        "推荐种子库"
+      ],
+      "full_package": {
+        "filename": "medpic-sdxl-pro-1.0.0-full.zip",
+        "size_mb": 8500,
+        "size_bytes": 8912896000,
+        "sha256": ""
+      },
+      "changelog": [
+        {
+          "version": "1.0.0",
+          "changes": ["首版发布：SDXL 模型 + 2 套风格 LoRA + 7 场景工作流"]
+        }
+      ]
+    },
+    {
+      "id": "medpic-kids-pack",
+      "product_id": "MedComm",
+      "name": "MedPic 儿科专包",
+      "category": "drawing",
+      "version": "1.0.0",
+      "description": "儿科卡通 LoRA + 绘本工作流 + 儿童角色库",
+      "includes": [
+        "medpic_kids_xl LoRA",
+        "绘本场景工作流模板",
+        "预置儿童角色库"
+      ],
+      "full_package": {
+        "filename": "medpic-kids-pack-1.0.0-full.zip",
+        "size_mb": 2500,
+        "size_bytes": 2621440000,
+        "sha256": ""
+      },
+      "changelog": [
+        {
+          "version": "1.0.0",
+          "changes": ["首版发布：儿科卡通 LoRA + 绘本工作流"]
+        }
+      ]
+    },
+    {
+      "id": "medpic-anatomy-pack",
+      "product_id": "MedComm",
+      "name": "MedPic 解剖图谱包",
+      "category": "drawing",
+      "version": "1.0.0",
+      "description": "医学解剖 LoRA + 解剖图示工作流 + 标注模板",
+      "includes": [
+        "medpic_anatomy_xl LoRA",
+        "解剖图示工作流模板",
+        "器官标注模板库"
+      ],
+      "full_package": {
+        "filename": "medpic-anatomy-pack-1.0.0-full.zip",
+        "size_mb": 3200,
+        "size_bytes": 3355443200,
+        "sha256": ""
+      },
+      "changelog": [
+        {
+          "version": "1.0.0",
+          "changes": ["首版发布：解剖 LoRA + 图示工作流 + 标注模板"]
+        }
+      ]
+    }
+  ]
+}

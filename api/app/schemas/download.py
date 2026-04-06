@@ -33,5 +33,20 @@ class SpecialtyDownloadResponse(BaseModel):
     expires_in: int = 7200
 
 
+class BundleDownloadRequest(BaseModel):
+    product_id: str
+    bundle_id: str
+    platform: str
+
+
+class BundleDownloadResponse(BaseModel):
+    success: bool = True
+    download_url: str | None = None
+    filename: str | None = None
+    size_bytes: int = 0
+    sha256: str = ""
+    download_log_id: int | None = None
+
+
 class DownloadCompleteRequest(BaseModel):
     download_log_id: int

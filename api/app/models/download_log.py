@@ -11,7 +11,7 @@ class DownloadLog(Base):
 
     id: Mapped[int] = mapped_column(BigIntPK, primary_key=True, autoincrement=True)
     user_id: Mapped[int] = mapped_column(BigInteger, ForeignKey("users.id"), nullable=False)
-    download_type: Mapped[str] = mapped_column(String(20), nullable=False)  # 'software' | 'specialty'
+    download_type: Mapped[str] = mapped_column(String(20), nullable=False)  # 'software' | 'specialty' | 'drawing_pack' | 'bundle'
     resource_id: Mapped[str | None] = mapped_column(String(100))
     platform: Mapped[str | None] = mapped_column(String(30))
     client_ip: Mapped[str | None] = mapped_column(String(45))

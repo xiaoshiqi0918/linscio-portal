@@ -14,6 +14,7 @@ class LicenseCode(Base):
     product_id: Mapped[str] = mapped_column(String(50), ForeignKey("products.product_id"), nullable=False)
     license_type: Mapped[str] = mapped_column(String(20), nullable=False)  # 'basic' | 'specialty'
     duration_months: Mapped[int | None] = mapped_column(SmallInteger)
+    duration_days: Mapped[int | None] = mapped_column(SmallInteger)
     is_trial: Mapped[int] = mapped_column(SmallInteger, default=0)
     specialty_ids: Mapped[dict | None] = mapped_column(JSON)
     is_activated: Mapped[int] = mapped_column(SmallInteger, default=0)

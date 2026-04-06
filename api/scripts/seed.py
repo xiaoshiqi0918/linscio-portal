@@ -11,7 +11,7 @@ import os
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from datetime import datetime
+from datetime import datetime, timezone
 
 from app.core.database import SessionLocal, engine, Base
 from app.core.security import hash_password
@@ -61,7 +61,7 @@ def seed():
                     is_active=1,
                     is_admin=1,
                     email_verified=1,
-                    created_at=datetime.utcnow(),
+                    created_at=datetime.now(timezone.utc).replace(tzinfo=None),
                 )
             )
             created.append(f"Admin '{ADMIN_EMAIL}'")

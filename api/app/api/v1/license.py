@@ -16,6 +16,7 @@ from app.models.user_license import UserLicense
 from app.models.user_specialty import UserSpecialty
 from app.models.specialty_version_policy import SpecialtyVersionPolicy
 from app.schemas.common import ProductListResponse, ProductOut
+from app.services.cos import read_manifest
 from app.schemas.license import (
     ActivateLicenseRequest,
     ActivateLicenseResponse,
@@ -24,6 +25,7 @@ from app.schemas.license import (
     LicenseStatusRequest,
     LicenseStatusResponse,
     ProductLicenseInfo,
+    ProductSpecialtyInfo,
     SpecialtyInfo,
     VersionPolicyInfo,
 )
@@ -65,7 +67,7 @@ async def activate_license(
     allowed, _ = check_rate_limit(db, "activate_ip", ip, 5, 3600, 3600)
     if not allowed:
         raise HTTPException(status_code=429, detail="rate_limit_exceeded")
-    allowed, _ = check_rate_limit(db, "activate_user", str(user.id), 10, 0, None)
+    allowed, _ = check_rate_limit(db, "activate_user", str(user.id), 10, None, None)
     if not allowed:
         raise HTTPException(status_code=429, detail="rate_limit_exceeded")
 
@@ -88,8 +90,13 @@ async def activate_license(
             .filter(UserLicense.user_id == user.id, UserLicense.product_id == lc.product_id)
             .first()
         )
-        months = lc.duration_months or 12
-        delta = timedelta(days=months * 30)
+        if lc.is_trial and lc.duration_days:
+            delta = timedelta(days=lc.duration_days)
+            days_count = lc.duration_days
+        else:
+            months = lc.duration_months or 12
+            delta = timedelta(days=months * 30)
+            days_count = months * 30
 
         if not existing:
             new_expires = now + delta
@@ -116,7 +123,7 @@ async def activate_license(
             ac = ActivationCode(
                 code=ac_code, user_id=user.id, product_id=lc.product_id,
                 device_fingerprint=req.device_fingerprint,
-                expires_at=now + timedelta(seconds=30),
+                expires_at=now + timedelta(minutes=5),
             )
             db.add(ac)
 
@@ -129,7 +136,7 @@ async def activate_license(
             return ActivateLicenseResponse(
                 license_type="basic", is_trial=bool(lc.is_trial),
                 new_expires_at=new_expires.isoformat() + "Z",
-                days_added=months * 30, deep_link=deep_link,
+                days_added=days_count, deep_link=deep_link,
             )
 
         if existing.is_trial == 1 and not lc.is_trial:
@@ -154,7 +161,7 @@ async def activate_license(
         return ActivateLicenseResponse(
             license_type="basic", is_trial=bool(existing.is_trial),
             new_expires_at=existing.expires_at.isoformat() + "Z",
-            days_added=months * 30, token_unchanged=True,
+            days_added=days_count, token_unchanged=True,
         )
 
     # --- specialty license ---
@@ -183,7 +190,7 @@ async def activate_license(
         lc.activated_at = now
         db.commit()
 
-        deep_link = f"linscio://specialty/new?ids={'&ids='.join(specialty_ids)}&product={lc.product_id}"
+        deep_link = f"linscio://specialty/new?ids={','.join(specialty_ids)}&product={lc.product_id}"
         return ActivateLicenseResponse(
             license_type="specialty",
             specialty_ids=specialty_ids,
@@ -222,14 +229,26 @@ async def license_status(
         UserSpecialty.user_id == lic.user_id, UserSpecialty.product_id == req.product_id,
     ).all()
 
-    specialties = [
-        SpecialtyInfo(
+    manifest = read_manifest()
+    manifest_map: dict[str, dict] = {}
+    for s in manifest.get("specialties", []):
+        if s.get("product_id") == req.product_id:
+            manifest_map[s["id"]] = s
+    for dp in manifest.get("drawing_packs", []):
+        if dp.get("product_id") == req.product_id:
+            manifest_map[dp["id"]] = dp
+
+    reported = req.reported_specialties or {}
+    specialties = []
+    for us in user_specs:
+        m = manifest_map.get(us.specialty_id, {})
+        specialties.append(SpecialtyInfo(
             id=us.specialty_id,
-            name=us.specialty_id,
+            name=m.get("name", us.specialty_id),
+            remote_version=m.get("version"),
+            local_version=reported.get(us.specialty_id),
             purchased_at=us.purchased_at.isoformat() + "Z" if us.purchased_at else None,
-        )
-        for us in user_specs
-    ]
+        ))
 
     policies = db.query(SpecialtyVersionPolicy).filter(
         SpecialtyVersionPolicy.product_id == req.product_id,
@@ -258,6 +277,13 @@ async def license_status_all(
     now = datetime.utcnow()
     result = []
 
+    manifest = read_manifest()
+    manifest_map: dict[str, dict[str, dict]] = {}
+    for s in manifest.get("specialties", []):
+        manifest_map.setdefault(s.get("product_id", ""), {})[s["id"]] = s
+    for dp in manifest.get("drawing_packs", []):
+        manifest_map.setdefault(dp.get("product_id", ""), {})[dp["id"]] = dp
+
     for p in products:
         lic = (
             db.query(UserLicense)
@@ -277,6 +303,22 @@ async def license_status_all(
             status = "valid" if lic.expires_at > now else "expired"
 
         days_remaining = max(0, (lic.expires_at - now).days) if lic.expires_at > now else 0
+
+        user_specs = db.query(UserSpecialty).filter(
+            UserSpecialty.user_id == user.id, UserSpecialty.product_id == p.product_id,
+        ).all()
+        reported = lic.reported_specialties or {}
+        spec_list = []
+        for us in user_specs:
+            m = manifest_map.get(p.product_id, {}).get(us.specialty_id, {})
+            spec_list.append(ProductSpecialtyInfo(
+                id=us.specialty_id,
+                name=m.get("name", us.specialty_id),
+                remote_version=m.get("version"),
+                local_version=reported.get(us.specialty_id),
+                purchased_at=us.purchased_at.isoformat() + "Z" if us.purchased_at else None,
+            ))
+
         result.append(ProductLicenseInfo(
             product_id=p.product_id, product_name=p.name,
             status=status, is_trial=bool(lic.is_trial),
@@ -284,6 +326,27 @@ async def license_status_all(
             days_remaining=days_remaining,
             device_name=lic.device_name,
             rebind_remaining=max(0, 2 - lic.rebind_count),
+            specialties=spec_list,
         ))
 
     return LicenseStatusAllResponse(licenses=result)
+
+
+# ---------- User specialties (portal, GET) ----------
+
+@router.get("/api/license/specialties")
+async def user_specialties(
+    user: User = Depends(get_current_user_by_session),
+    db: Session = Depends(get_db),
+):
+    rows = db.query(UserSpecialty).filter(UserSpecialty.user_id == user.id).all()
+    return {
+        "specialties": [
+            {
+                "id": r.specialty_id,
+                "product_id": r.product_id,
+                "purchased_at": r.purchased_at.isoformat() + "Z" if r.purchased_at else None,
+            }
+            for r in rows
+        ]
+    }

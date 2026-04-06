@@ -22,10 +22,19 @@
         </template>
       </el-table-column>
       <el-table-column prop="created_at" label="注册时间" width="170" />
-      <el-table-column label="操作" width="120" fixed="right">
+      <el-table-column label="操作" width="200" fixed="right">
         <template #default="{ row }">
           <el-button v-if="row.is_active" type="danger" size="small" text @click="handleBan(row)">封禁</el-button>
           <el-button v-else type="success" size="small" text @click="handleUnban(row)">解封</el-button>
+          <el-button
+            v-if="!row.is_admin"
+            type="danger"
+            size="small"
+            text
+            @click="handleDelete(row)"
+          >
+            删除
+          </el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -43,7 +52,7 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import { getUsers, banUser, unbanUser } from '@/api'
+import { getUsers, banUser, unbanUser, deleteUser } from '@/api'
 
 const loading = ref(false)
 const search = ref('')
@@ -75,6 +84,19 @@ async function handleUnban(row: any) {
   try {
     await unbanUser(row.id)
     ElMessage.success('已解封')
+    fetchData()
+  } catch {}
+}
+
+async function handleDelete(row: any) {
+  try {
+    await ElMessageBox.confirm(
+      `将永久删除用户 ${row.email} 及其会话、授权、下载记录等关联数据，且不可恢复。确定继续？`,
+      '删除用户',
+      { type: 'warning', confirmButtonText: '删除', cancelButtonText: '取消' },
+    )
+    await deleteUser(row.id, { reason: '管理员删除' })
+    ElMessage.success('已删除')
     fetchData()
   } catch {}
 }

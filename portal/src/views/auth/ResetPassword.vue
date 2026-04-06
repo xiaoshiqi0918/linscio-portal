@@ -36,16 +36,24 @@ const confirm = ref('')
 const loading = ref(false)
 const error = ref('')
 const success = ref(false)
+const token = route.query.token as string | undefined
+
+if (!token) {
+  error.value = '重置链接无效或已过期，请重新申请'
+}
 
 async function handleReset() {
   error.value = ''
+  if (!token) {
+    error.value = '重置链接无效或已过期，请重新申请'
+    return
+  }
   if (password.value !== confirm.value) {
     error.value = '两次输入的密码不一致'
     return
   }
   loading.value = true
   try {
-    const token = route.query.token as string
     await authResetPassword({ token, new_password: password.value })
     success.value = true
     setTimeout(() => router.push('/login'), 2000)

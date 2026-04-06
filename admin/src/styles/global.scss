@@ -1,5 +1,24 @@
 :root {
   --sidebar-width: 220px;
+  --primary: #1A6B50;
+  --primary-light: rgba(26, 107, 80, 0.08);
+  --primary-dark: #145A43;
+  --success: #059669;
+  --warning: #d97706;
+  --danger: #dc2626;
+  --text-primary: #1a2e28;
+  --text-secondary: #5f706a;
+  --text-muted: #8a9a94;
+  --bg-page: #FFFFFF;
+  --bg-alt: #F5F7F6;
+  --bg-card: #FFFFFF;
+  --bg-surface: #EDF0EE;
+  --bg-dark: #1E3530;
+  --bg-dark-secondary: #253F3A;
+  --border: #E5E7E6;
+  --border-card: #ECEEED;
+  --text-on-dark: rgba(255, 255, 255, 0.92);
+  --text-on-dark-muted: rgba(255, 255, 255, 0.55);
 }
 
 * { margin: 0; padding: 0; box-sizing: border-box; }

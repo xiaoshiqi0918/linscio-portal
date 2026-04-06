@@ -40,3 +40,20 @@ class ActivateByCodeResponse(BaseModel):
     success: bool = True
     access_token: str
     expires_at: str
+
+
+class ClientLoginRequest(BaseModel):
+    email: EmailStr
+    password: str
+    product_id: str = "medcomm"
+    device_fingerprint: str | None = None
+    device_name: str | None = None
+
+
+class ClientLoginResponse(BaseModel):
+    success: bool = True
+    access_token: str
+    email: str
+    expires_at: str | None = None
+    is_trial: bool = False
+    days_remaining: int | None = None

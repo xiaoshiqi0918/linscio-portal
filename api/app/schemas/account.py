@@ -17,3 +17,9 @@ class ChangePhoneRequest(BaseModel):
 
 class DeleteAccountRequest(BaseModel):
     password: str
+
+
+class MigrationRequest(BaseModel):
+    new_email: str
+    password: str
+    reason: str | None = None

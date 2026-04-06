@@ -2,7 +2,7 @@
   <div>
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
       <h2>授权码管理</h2>
-      <el-button type="primary" @click="showGenerate = true">生成授权码</el-button>
+      <el-button type="primary" @click="$router.push('/licenses/generate')">生成授权码</el-button>
     </div>
 
     <el-table :data="items" v-loading="loading" stripe>
@@ -13,7 +13,13 @@
       </el-table-column>
       <el-table-column prop="product_id" label="产品" width="100" />
       <el-table-column prop="license_type" label="类型" width="90" />
-      <el-table-column prop="duration_months" label="时长(月)" width="90" />
+      <el-table-column label="时长" width="100">
+        <template #default="{ row }">
+          <span v-if="row.is_trial && row.duration_days">{{ row.duration_days }} 天</span>
+          <span v-else-if="row.duration_months">{{ row.duration_months }} 个月</span>
+          <span v-else>--</span>
+        </template>
+      </el-table-column>
       <el-table-column label="试用" width="70">
         <template #default="{ row }">{{ row.is_trial ? '是' : '否' }}</template>
       </el-table-column>
@@ -59,6 +65,9 @@
         <el-form-item v-if="genForm.license_type === 'basic'" label="试用码">
           <el-switch v-model="genForm.is_trial" />
         </el-form-item>
+        <el-form-item v-if="genForm.license_type === 'basic' && genForm.is_trial" label="试用天数">
+          <span>1 天（固定）</span>
+        </el-form-item>
         <el-form-item label="数量">
           <el-input-number v-model="genForm.count" :min="1" :max="100" />
         </el-form-item>
@@ -98,7 +107,7 @@ const showGenerate = ref(false)
 const genLoading = ref(false)
 const genForm = reactive({
   product_id: '', license_type: 'basic',
-  count: 1, duration_months: 12, is_trial: false,
+  count: 1, duration_months: 12, duration_days: 1, is_trial: false,
   recipient_note: '',
 })
 const showCodes = ref(false)
@@ -117,7 +126,13 @@ async function fetchData() {
 async function handleGenerate() {
   genLoading.value = true
   try {
-    const { data } = await generateLicenses(genForm)
+    const payload: any = { ...genForm }
+    if (payload.is_trial) {
+      delete payload.duration_months
+    } else {
+      delete payload.duration_days
+    }
+    const { data } = await generateLicenses(payload)
     generatedCodes.value = data.codes
     showGenerate.value = false
     showCodes.value = true

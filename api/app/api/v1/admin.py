@@ -16,12 +16,16 @@ from app.models.product import Product
 from app.models.security_limit import SecurityLimit
 from app.models.account_migration_request import AccountMigrationRequest
 from app.models.activation_code import ActivationCode
+from app.models.device_change_code import DeviceChangeCode
+from app.models.email_verification_code import EmailVerificationCode
 from app.models.specialty_version_policy import SpecialtyVersionPolicy
 from app.models.user import User
 from app.models.user_license import UserLicense
 from app.models.user_session import UserSession
+from app.models.user_specialty import UserSpecialty
 from app.schemas.admin import (
     BanUserRequest,
+    DeleteUserRequest,
     ForceRebindRequest,
     GenerateLicenseRequest,
     GenerateLicenseResponse,
@@ -67,6 +71,9 @@ async def stats_overview(
     monthly_sp = db.query(func.count(DownloadLog.id)).filter(
         DownloadLog.download_type == "specialty", DownloadLog.created_at >= month_start,
     ).scalar()
+    monthly_bundle = db.query(func.count(DownloadLog.id)).filter(
+        DownloadLog.download_type == "bundle", DownloadLog.created_at >= month_start,
+    ).scalar()
 
     total_dl = db.query(func.count(DownloadLog.id)).filter(DownloadLog.created_at >= month_start).scalar()
     completed_dl = db.query(func.count(DownloadLog.id)).filter(
@@ -79,6 +86,7 @@ async def stats_overview(
         active_licenses=active_licenses,
         expiring_soon=expiring_soon,
         monthly_downloads=monthly_sw,
+        monthly_bundle_downloads=monthly_bundle,
         monthly_specialty_downloads=monthly_sp,
         download_success_rate=round(rate, 1),
     )
@@ -128,7 +136,8 @@ async def ban_user(
     target.is_active = 0
     db.query(UserSession).filter(UserSession.user_id == user_id).delete()
     db.query(UserLicense).filter(UserLicense.user_id == user_id).update(
-        {UserLicense.access_token: None}, synchronize_session=False,
+        {UserLicense.access_token: None, UserLicense.token_created_at: None},
+        synchronize_session=False,
     )
 
     _log_action(db, admin.id, "ban_user", "user", str(user_id), {"reason": req.reason}, get_client_ip(request))
@@ -148,6 +157,64 @@ async def unban_user(
         raise HTTPException(status_code=404, detail="用户不存在")
     target.is_active = 1
     _log_action(db, admin.id, "unban_user", "user", str(user_id), {}, get_client_ip(request))
+    db.commit()
+    return SuccessResponse()
+
+
+def _purge_user_dependencies(db: Session, user_id: int, user_email: str) -> None:
+    """删除用户前清理外键依赖（MySQL 无外键级联时须按序删除）。"""
+    db.query(UserSession).filter(UserSession.user_id == user_id).delete(synchronize_session=False)
+    db.query(EmailVerificationCode).filter(EmailVerificationCode.email == user_email).delete(
+        synchronize_session=False
+    )
+    db.query(DeviceChangeCode).filter(DeviceChangeCode.user_id == user_id).delete(synchronize_session=False)
+    db.query(AccountMigrationRequest).filter(AccountMigrationRequest.handled_by == user_id).update(
+        {AccountMigrationRequest.handled_by: None},
+        synchronize_session=False,
+    )
+    db.query(AccountMigrationRequest).filter(AccountMigrationRequest.from_user_id == user_id).delete(
+        synchronize_session=False
+    )
+    db.query(ActivationCode).filter(ActivationCode.user_id == user_id).delete(synchronize_session=False)
+    db.query(DownloadLog).filter(DownloadLog.user_id == user_id).delete(synchronize_session=False)
+    db.query(DeviceRebindLog).filter(DeviceRebindLog.user_id == user_id).delete(synchronize_session=False)
+    db.query(UserSpecialty).filter(UserSpecialty.user_id == user_id).delete(synchronize_session=False)
+    db.query(UserLicense).filter(UserLicense.user_id == user_id).delete(synchronize_session=False)
+    db.query(LicenseCode).filter(LicenseCode.activated_by == user_id).update(
+        {LicenseCode.activated_by: None},
+        synchronize_session=False,
+    )
+    db.query(SecurityLimit).filter(SecurityLimit.identifier == user_email).delete(synchronize_session=False)
+    db.query(User).filter(User.id == user_id).delete(synchronize_session=False)
+
+
+@router.post("/users/{user_id}/delete", response_model=SuccessResponse)
+async def delete_user(
+    user_id: int,
+    req: DeleteUserRequest,
+    request: Request,
+    admin: User = Depends(get_current_admin),
+    db: Session = Depends(get_db),
+):
+    if user_id == admin.id:
+        raise HTTPException(status_code=400, detail="不能删除当前登录账号")
+    target = db.query(User).filter(User.id == user_id).first()
+    if not target:
+        raise HTTPException(status_code=404, detail="用户不存在")
+    if target.is_admin == 1:
+        raise HTTPException(status_code=400, detail="不能删除管理员账号")
+
+    email = target.email
+    _purge_user_dependencies(db, user_id, email)
+    _log_action(
+        db,
+        admin.id,
+        "delete_user",
+        "user",
+        str(user_id),
+        {"email": email, "reason": req.reason},
+        get_client_ip(request),
+    )
     db.commit()
     return SuccessResponse()
 
@@ -179,7 +246,8 @@ async def generate_licenses(
             code=code,
             product_id=req.product_id,
             license_type=req.license_type,
-            duration_months=req.duration_months,
+            duration_months=req.duration_months if not req.is_trial else None,
+            duration_days=req.duration_days if req.is_trial else None,
             is_trial=1 if req.is_trial else 0,
             specialty_ids=req.specialty_ids,
             recipient_note=req.recipient_note,
@@ -218,7 +286,9 @@ async def list_licenses(
         "items": [
             {
                 "id": lc.id, "code": lc.code, "product_id": lc.product_id,
-                "license_type": lc.license_type, "duration_months": lc.duration_months,
+                "license_type": lc.license_type,
+                "duration_months": lc.duration_months,
+                "duration_days": lc.duration_days,
                 "is_trial": lc.is_trial, "is_activated": lc.is_activated,
                 "activated_by": lc.activated_by, "activated_at": lc.activated_at.isoformat() if lc.activated_at else None,
                 "recipient_note": lc.recipient_note,
@@ -358,6 +428,46 @@ async def handle_migration(
     m.handled_by = admin.id
     m.handled_at = datetime.utcnow()
 
+    if req.action == "approve":
+        from_user = db.query(User).filter(User.id == m.from_user_id).first()
+        to_user = db.query(User).filter(User.email == m.to_credential, User.is_active == 1).first()
+
+        if not from_user:
+            raise HTTPException(status_code=400, detail="原用户不存在")
+        if not to_user:
+            raise HTTPException(status_code=400, detail="目标邮箱用户不存在或未激活，请先注册该邮箱")
+
+        licenses = db.query(UserLicense).filter(UserLicense.user_id == from_user.id).all()
+        for lic in licenses:
+            existing = (
+                db.query(UserLicense)
+                .filter(UserLicense.user_id == to_user.id, UserLicense.product_id == lic.product_id)
+                .first()
+            )
+            if existing:
+                if lic.expires_at and existing.expires_at:
+                    base = max(datetime.utcnow(), existing.expires_at)
+                    remaining = max(timedelta(0), lic.expires_at - datetime.utcnow())
+                    existing.expires_at = base + remaining
+            else:
+                lic.user_id = to_user.id
+                lic.access_token = None
+                lic.device_fingerprint = None
+                lic.device_name = None
+
+        from app.models.user_specialty import UserSpecialty
+        specs = db.query(UserSpecialty).filter(UserSpecialty.user_id == from_user.id).all()
+        for s in specs:
+            exists = db.query(UserSpecialty).filter_by(
+                user_id=to_user.id, product_id=s.product_id, specialty_id=s.specialty_id,
+            ).first()
+            if not exists:
+                s.user_id = to_user.id
+            else:
+                db.delete(s)
+
+        db.query(UserSession).filter(UserSession.user_id == from_user.id).delete()
+
     action_type = "approve_migration" if req.action == "approve" else "reject_migration"
     _log_action(db, admin.id, action_type, "migration", str(migration_id), {"reason": req.reason}, get_client_ip(request))
     db.commit()
@@ -479,9 +589,11 @@ async def list_download_logs(
     if download_type:
         query = query.filter(DownloadLog.download_type == download_type)
     total = query.count()
+    completed_count = query.filter(DownloadLog.completed == 1).count()
     items = query.order_by(DownloadLog.created_at.desc()).offset((page - 1) * size).limit(size).all()
     return {
-        "total": total, "page": page, "size": size,
+        "total": total, "completed_count": completed_count,
+        "page": page, "size": size,
         "items": [
             {
                 "id": dl.id, "user_id": dl.user_id,
@@ -550,9 +662,15 @@ async def list_admin_logs(
     admin: User = Depends(get_current_admin),
     db: Session = Depends(get_db),
 ):
-    query = db.query(AdminLog)
-    total = query.count()
-    items = query.order_by(AdminLog.created_at.desc()).offset((page - 1) * size).limit(size).all()
+    # 勿在同一 Query 上先 count 再 order_by：部分环境下会生成低效或异常 SQL；大表易拖满 Nginx 超时→502
+    total = db.query(func.count(AdminLog.id)).scalar() or 0
+    items = (
+        db.query(AdminLog)
+        .order_by(AdminLog.created_at.desc())
+        .offset((page - 1) * size)
+        .limit(size)
+        .all()
+    )
     return {
         "total": total, "page": page, "size": size,
         "items": [

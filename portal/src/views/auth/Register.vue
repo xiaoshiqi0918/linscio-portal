@@ -72,10 +72,28 @@ async function handleRegister() {
   }
   loading.value = true
   try {
-    await authRegister(form)
+    const res = await authRegister(form)
+    const msg = res.data?.message || ''
     step.value = 'verify'
+    if (msg.includes('验证码')) {
+      success.value = msg
+    }
   } catch (e: any) {
-    error.value = e.response?.data?.detail || '注册失败'
+    const d = e.response?.data?.detail
+    const raw =
+      typeof d === 'string'
+        ? d
+        : Array.isArray(d)
+          ? d.map((x: { msg?: string }) => x?.msg).filter(Boolean).join('; ')
+          : e.response?.data?.error || e.message
+    let msg =
+      raw === 'internal_error'
+        ? '服务器异常，请稍后重试。若持续出现，请联系管理员。'
+        : raw
+    if (e.response?.status === 502 || e.response?.status === 504) {
+      msg = '网关超时或服务暂时不可用，请稍后重试。（注册可能已成功，若收不到邮件请稍后再试。）'
+    }
+    error.value = msg || '注册失败'
   } finally {
     loading.value = false
   }

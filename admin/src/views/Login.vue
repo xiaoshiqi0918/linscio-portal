@@ -53,7 +53,7 @@ async function handleLogin() {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #f0f2f5;
+  background: var(--bg-alt);
 }
 .login-card { width: 400px; }
 </style>

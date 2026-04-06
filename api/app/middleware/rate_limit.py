@@ -13,7 +13,7 @@ def check_rate_limit(
     limit_type: str,
     identifier: str,
     max_count: int,
-    window_seconds: int,
+    window_seconds: int | None,
     lock_seconds: int | None = None,
 ) -> tuple[bool, datetime | None]:
     """
@@ -21,6 +21,7 @@ def check_rate_limit(
 
     Returns (is_allowed, locked_until).
     If is_allowed is False, locked_until is when the lock expires (or None for permanent locks).
+    window_seconds=None means cumulative (never auto-reset).
     """
     now = datetime.utcnow()
     record = (
@@ -32,7 +33,7 @@ def check_rate_limit(
     if record and record.locked_until and record.locked_until > now:
         return False, record.locked_until
 
-    if record and record.last_fail_at:
+    if record and record.last_fail_at and window_seconds:
         window_start = now - timedelta(seconds=window_seconds)
         if record.last_fail_at < window_start:
             record.fail_count = 0

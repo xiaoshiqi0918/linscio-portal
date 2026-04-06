@@ -10,7 +10,14 @@ _engine_kwargs: dict = {"echo": not settings.is_production}
 if settings.is_sqlite:
     _engine_kwargs["connect_args"] = {"check_same_thread": False}
 else:
-    _engine_kwargs.update(pool_size=10, max_overflow=20, pool_recycle=3600)
+    # connect_timeout：避免 MySQL 不可达时长时间占住请求，触发 Nginx 502（proxy_read_timeout）
+    _engine_kwargs.update(
+        pool_size=10,
+        max_overflow=20,
+        pool_recycle=3600,
+        pool_pre_ping=True,
+        connect_args={"connect_timeout": 10},
+    )
 
 engine = create_engine(settings.database_url, **_engine_kwargs)
 

@@ -5,70 +5,63 @@
     <!-- Hero -->
     <section class="hero">
       <div class="container">
-        <h1 class="hero-title">面向专业场景的<br/>智能工具矩阵</h1>
-        <p class="hero-subtitle">LinScio 为医学、学术、品管、统计等专业领域提供结构化内容创作与智能辅助工具</p>
+        <h1 class="hero-title">专注做好每一个工具</h1>
+        <p class="hero-subtitle">
+          LinScio 旗下一系列独立软件产品，各自解决一类具体问题，<br/>互不依赖，按需选用。
+        </p>
         <div class="hero-actions">
-          <a href="https://portal.linscio.com.cn" target="_blank" class="btn-primary">开始使用</a>
-          <a href="https://medcomm.linscio.com.cn" target="_blank" class="btn-outline">了解 MedComm</a>
+          <a href="mailto:linscio@163.com" class="btn-primary">申请试用</a>
+          <a href="#products" class="btn-ghost" @click.prevent="scrollTo('products')">查看产品 →</a>
         </div>
       </div>
     </section>
 
     <!-- Products -->
-    <section class="products">
+    <section id="products" class="products">
       <div class="container">
-        <h2 class="section-title">产品矩阵</h2>
-        <p class="section-sub">每款产品专注一个专业场景，共享统一的 AI 引擎与授权体系</p>
+        <h2 class="section-title">产品</h2>
         <div class="product-grid">
-          <div v-for="p in products" :key="p.id" class="product-card">
-            <div class="product-card__icon">{{ p.icon }}</div>
+          <a v-for="p in products" :key="p.id" :href="p.link || '#'" class="product-card" :class="{ disabled: !p.link }" target="_blank" @click="!p.link && $event.preventDefault()">
+            <div class="product-icon" :style="{ background: p.bgColor }">
+              <span :style="{ color: p.iconColor }">{{ p.icon }}</span>
+            </div>
             <h3>{{ p.name }}</h3>
-            <p class="product-card__tag">{{ p.tag }}</p>
-            <p class="product-card__desc">{{ p.desc }}</p>
-            <a v-if="p.link" :href="p.link" target="_blank" class="product-link">了解更多 &rarr;</a>
-            <span v-else class="product-soon">即将推出</span>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Advantages -->
-    <section class="advantages">
-      <div class="container">
-        <h2 class="section-title">为什么选择 LinScio</h2>
-        <div class="adv-grid">
-          <div v-for="a in advantages" :key="a.title" class="adv-card">
-            <div class="adv-icon">{{ a.icon }}</div>
-            <h3>{{ a.title }}</h3>
-            <p>{{ a.desc }}</p>
+            <p class="product-desc">{{ p.desc }}</p>
+            <span class="product-link" v-if="p.domain">{{ p.domain }} →</span>
+          </a>
+          <div class="product-card product-card--more">
+            <div class="more-icon">+</div>
+            <p class="more-text">更多产品持续推出</p>
           </div>
         </div>
       </div>
     </section>
 
     <!-- Vision -->
-    <section class="vision">
+    <section id="vision" class="vision">
       <div class="container">
-        <h2 class="section-title">我们的理念</h2>
-        <div class="vision-content">
-          <p>
-            LinScio 致力于将 AI 能力与专业知识深度融合。我们相信，优秀的专业工具不应只是通用 AI 的包装，
-            而应当深入理解每个领域的工作流程、知识体系和质量标准。
-          </p>
-          <p>
-            通过结构化的知识管理、防编造验证和专业学科包，我们确保 AI 生成的内容不仅高效，
-            更经得起专业审视。本地优先的架构设计则让数据安全掌握在用户手中。
-          </p>
+        <h2 class="section-title">理念</h2>
+        <div class="vision-grid">
+          <div v-for="v in visions" :key="v.title" class="vision-card">
+            <h3>{{ v.title }}</h3>
+            <p>{{ v.desc }}</p>
+          </div>
         </div>
       </div>
     </section>
 
     <!-- CTA -->
     <section class="cta">
-      <div class="container cta-inner">
-        <h2>准备好提升专业工作效率了吗？</h2>
-        <p>MedComm 现已开放，更多产品即将上线</p>
-        <a href="https://portal.linscio.com.cn/register" target="_blank" class="btn-primary">免费注册</a>
+      <div class="container">
+        <div class="cta-card">
+          <h2>想了解哪款产品？</h2>
+          <p>所有产品均通过授权码激活使用，欢迎联系我们获取试用资<br/>格或进一步了解。</p>
+          <div class="cta-actions">
+            <a href="mailto:linscio@163.com" class="btn-primary">发送邮件</a>
+            <a href="/contact" class="btn-outline">微信咨询</a>
+            <a href="mailto:linscio@163.com" class="btn-outline">申请试用</a>
+          </div>
+        </div>
       </div>
     </section>
 
@@ -81,92 +74,161 @@ import SiteHeader from '@/components/layout/SiteHeader.vue'
 import SiteFooter from '@/components/layout/SiteFooter.vue'
 
 const products = [
-  { id: 'medcomm', name: 'MedComm', icon: 'M', tag: '医学科普创作', desc: '结构化医学科普内容创作工具，融合 AI 写作、RAG 知识增强和防编造验证，支持 17 种科普形式与 7 种发布平台', link: 'https://medcomm.linscio.com.cn' },
-  { id: 'schola', name: 'Schola', icon: 'S', tag: '学术写作辅助', desc: '学术论文写作辅助工具，支持论文结构规划、修改追踪、学术规范验证与文献管理', link: null },
-  { id: 'qcc', name: 'QCC', icon: 'Q', tag: '品管圈管理', desc: '品管圈活动全流程管理工具，结构化管理 PDCA 循环、数据分析与成果汇报', link: null },
-  { id: 'stats', name: 'Stats', icon: 'St', tag: '数据统计分析', desc: '面向临床科研的统计分析工具，支持常用统计方法、图表生成与结果解读', link: null },
-  { id: 'docs', name: 'Docs', icon: 'D', tag: '文件知识管理', desc: '团队知识库与文档协作平台，集中管理科室文件、SOP 与培训资料', link: null },
+  {
+    id: 'medcomm', name: 'MedComm',
+    icon: '📋', bgColor: '#e8f5e9', iconColor: '#2e7d32',
+    desc: '结构化内容创作工具，支持多种输出格式，学科包按需扩展',
+    link: import.meta.env.VITE_URL_MEDCOMM,
+    domain: 'medcomm.linscio.com.cn',
+  },
+  {
+    id: 'schola', name: 'Schola',
+    icon: '📖', bgColor: '#e3f2fd', iconColor: '#1565c0',
+    desc: '学术写作辅助工具，覆盖文献整理、格式规范与全文结构组织',
+    link: null, domain: 'schola.linscio.com.cn',
+  },
+  {
+    id: 'qcc', name: 'QCC',
+    icon: '⚙', bgColor: '#fff8e1', iconColor: '#f9a825',
+    desc: '品管圈活动管理工具，全流程记录、数据整理与标准化报告输出',
+    link: null, domain: 'qcc.linscio.com.cn',
+  },
+  {
+    id: 'stats', name: 'Stats',
+    icon: '📊', bgColor: '#fce4ec', iconColor: '#c62828',
+    desc: '数据统计分析工具，无需编程基础，导入数据即可完成常用分析',
+    link: null, domain: 'stats.linscio.com.cn',
+  },
+  {
+    id: 'docs', name: 'Docs',
+    icon: '📁', bgColor: '#fbe9e7', iconColor: '#d84315',
+    desc: '文件集中管理工具，统一存储、分类检索与版本追踪',
+    link: null, domain: 'docs.linscio.com.cn',
+  },
 ]
 
-const advantages = [
-  { icon: '🎯', title: '专业场景深耕', desc: '每款产品深入理解特定领域的工作流程与专业标准，而非通用 AI 的简单套壳' },
-  { icon: '🛡', title: '内容质量保障', desc: '多层验证管线确保 AI 生成内容的准确性，自动标记存疑内容供人工复核' },
-  { icon: '📚', title: '专业知识增强', desc: '学科包体系提供领域专属的术语库、案例库和写作范式，提升 AI 输出的专业性' },
-  { icon: '🔒', title: '本地优先架构', desc: '核心数据存储在本地，敏感内容无需上传云端，充分保障数据安全与隐私' },
-  { icon: '🔄', title: '统一授权体系', desc: '一个账号管理所有产品授权，跨设备同步，灵活的授权码与学科包扩展机制' },
-  { icon: '💡', title: '持续迭代进化', desc: '基于用户反馈持续优化 AI 模型与产品功能，学科包定期更新专业知识' },
+const visions = [
+  { title: '独立、聚焦', desc: '每款产品只解决一类问题，不搞全能，不强迫捆绑。' },
+  { title: '简洁、好用', desc: '功能不堆砌，交互不繁琐，工具的价值在于减少障碍。' },
+  { title: '本地优先', desc: '数据存储在本地，离线可用，不依赖持续联网。' },
 ]
+
+function scrollTo(id: string) {
+  const el = document.getElementById(id)
+  if (el) el.scrollIntoView({ behavior: 'smooth' })
+}
 </script>
 
 <style scoped lang="scss">
-.container { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+.container { max-width: 1100px; margin: 0 auto; padding: 0 24px; }
 
+.section-title {
+  font-size: 16px; font-weight: 500; color: var(--text-secondary);
+  margin-bottom: 28px;
+}
+
+/* ── Hero ── */
 .hero {
   padding: 100px 0 80px; text-align: center;
-  background: linear-gradient(180deg, #f8faff 0%, #fff 100%);
+  background: linear-gradient(180deg, var(--bg-dark-secondary) 0%, var(--bg-hero) 40%, var(--bg-page) 100%);
 }
-.hero-title { font-size: 48px; font-weight: 700; line-height: 1.2; margin-bottom: 20px; letter-spacing: -1px; }
-.hero-subtitle { font-size: 18px; color: var(--text-secondary); max-width: 600px; margin: 0 auto 32px; }
-.hero-actions { display: flex; gap: 12px; justify-content: center; }
-
+.hero-title {
+  font-size: 42px; font-weight: 700; line-height: 1.2;
+  margin-bottom: 20px; color: var(--text-primary); letter-spacing: -1px;
+}
+.hero-subtitle {
+  font-size: 15px; color: var(--text-secondary);
+  max-width: 520px; margin: 0 auto 36px; line-height: 1.8;
+}
+.hero-actions {
+  display: flex; gap: 12px; justify-content: center;
+}
 .btn-primary {
-  padding: 12px 28px; background: var(--primary); color: #fff; border-radius: 8px;
-  font-weight: 500; font-size: 15px; text-decoration: none;
-  &:hover { background: #1240a8; text-decoration: none; }
+  display: inline-block;
+  padding: 10px 28px; border-radius: 6px;
+  font-size: 14px; font-weight: 500;
+  background: var(--primary); color: #fff;
+  text-decoration: none; transition: background 0.15s;
+  &:hover { background: var(--primary-dark); }
+}
+.btn-ghost {
+  display: inline-block;
+  padding: 10px 24px; border: 1px solid var(--border);
+  border-radius: 6px; font-size: 14px; color: var(--text-primary);
+  text-decoration: none; transition: all 0.15s;
+  &:hover { border-color: var(--primary); color: var(--primary); }
+}
+
+/* ── Products ── */
+.products { padding: 60px 0 80px; background: var(--bg-alt); }
+.product-grid {
+  display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px;
+}
+.product-card {
+  display: block;
+  background: var(--bg-card); border: 1px solid var(--border-card); border-radius: 14px;
+  padding: 28px; text-decoration: none; color: var(--text-primary);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+  transition: box-shadow 0.2s, transform 0.2s;
+  &:hover { box-shadow: 0 6px 20px rgba(0,0,0,0.07); transform: translateY(-2px); }
+  &.disabled { cursor: default; &:hover { transform: none; } }
+  h3 { font-size: 16px; font-weight: 600; margin-bottom: 8px; color: var(--text-primary); }
+}
+.product-icon {
+  width: 40px; height: 40px; border-radius: 10px; margin-bottom: 16px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px;
+}
+.product-desc { font-size: 13px; color: var(--text-secondary); line-height: 1.7; margin-bottom: 16px; }
+.product-link { font-size: 12px; color: var(--text-muted); }
+.product-card--more {
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  background: transparent; border: 1px dashed var(--border);
+  cursor: default;
+}
+.more-icon {
+  font-size: 28px; color: var(--text-muted); margin-bottom: 8px; font-weight: 300;
+}
+.more-text { font-size: 13px; color: var(--text-muted); }
+
+/* ── Vision ── */
+.vision { padding: 80px 0; }
+.vision-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 40px;
+}
+.vision-card {
+  h3 { font-size: 15px; font-weight: 600; color: var(--text-primary); margin-bottom: 8px; }
+  p { font-size: 13px; color: var(--text-secondary); line-height: 1.7; }
+}
+
+/* ── CTA ── */
+.cta { padding: 60px 0 80px; background: var(--bg-alt); }
+.cta-card {
+  background: var(--bg-card); border: 1px solid var(--border-card);
+  border-radius: 16px; padding: 56px 40px; text-align: center;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+  h2 { font-size: 22px; font-weight: 600; color: var(--text-primary); margin-bottom: 12px; }
+  p { font-size: 14px; color: var(--text-secondary); line-height: 1.8; margin-bottom: 28px; }
+}
+.cta-actions {
+  display: flex; gap: 12px; justify-content: center;
 }
 .btn-outline {
-  padding: 12px 28px; border: 1px solid var(--border); border-radius: 8px;
-  font-weight: 500; font-size: 15px; color: var(--text-primary); text-decoration: none;
-  &:hover { border-color: var(--primary); color: var(--primary); text-decoration: none; }
+  display: inline-block;
+  padding: 10px 24px; border: 1px solid var(--border);
+  border-radius: 6px; font-size: 14px; color: var(--text-primary);
+  text-decoration: none; transition: all 0.15s;
+  &:hover { border-color: var(--primary); color: var(--primary); }
 }
 
-.section-title { font-size: 28px; font-weight: 600; text-align: center; margin-bottom: 12px; }
-.section-sub { text-align: center; color: var(--text-secondary); margin-bottom: 40px; }
-
-.products { padding: 80px 0; }
-.product-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 24px; }
-.product-card {
-  background: #fff; border: 1px solid var(--border); border-radius: 12px;
-  padding: 28px 24px; text-align: center; transition: box-shadow 0.2s;
-  &:hover { box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
-  &__icon {
-    width: 48px; height: 48px; margin: 0 auto 16px;
-    background: var(--primary-light); color: var(--primary);
-    border-radius: 12px; display: flex; align-items: center; justify-content: center;
-    font-size: 18px; font-weight: 700;
-  }
-  h3 { font-size: 18px; margin-bottom: 4px; }
-  &__tag { font-size: 12px; color: var(--primary); font-weight: 500; margin-bottom: 12px; }
-  &__desc { font-size: 13px; color: var(--text-secondary); line-height: 1.6; margin-bottom: 16px; }
-}
-.product-link { font-size: 13px; font-weight: 500; }
-.product-soon { font-size: 12px; color: var(--text-muted); }
-
-.advantages { padding: 80px 0; background: #f8faff; }
-.adv-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
-.adv-card {
-  padding: 28px; background: #fff; border-radius: 12px; border: 1px solid var(--border);
-  h3 { font-size: 16px; margin: 12px 0 8px; }
-  p { font-size: 13px; color: var(--text-secondary); line-height: 1.6; }
-}
-.adv-icon { font-size: 28px; }
-
-.vision { padding: 80px 0; }
-.vision-content {
-  max-width: 700px; margin: 0 auto; text-align: center;
-  p { color: var(--text-secondary); font-size: 15px; line-height: 1.8; margin-bottom: 16px; }
-}
-
-.cta { padding: 80px 0; background: linear-gradient(180deg, #f0f5ff 0%, #e8efff 100%); }
-.cta-inner {
-  text-align: center;
-  h2 { font-size: 28px; font-weight: 600; margin-bottom: 12px; }
-  p { color: var(--text-secondary); margin-bottom: 24px; }
-}
-
+/* ── Responsive ── */
 @media (max-width: 768px) {
-  .hero-title { font-size: 32px; }
-  .adv-grid { grid-template-columns: 1fr; }
-  .hero-actions { flex-direction: column; align-items: center; }
+  .hero-title { font-size: 28px; }
+  .hero-subtitle br { display: none; }
+  .product-grid { grid-template-columns: 1fr; }
+  .vision-grid { grid-template-columns: 1fr; gap: 24px; }
+  .hero-actions, .cta-actions { flex-direction: column; align-items: center; }
+  .cta-card { padding: 40px 24px; }
 }
 </style>

@@ -54,6 +54,14 @@ class LicenseStatusResponse(BaseModel):
     version_policies: list[VersionPolicyInfo] = []
 
 
+class ProductSpecialtyInfo(BaseModel):
+    id: str
+    name: str
+    remote_version: str | None = None
+    local_version: str | None = None
+    purchased_at: str | None = None
+
+
 class ProductLicenseInfo(BaseModel):
     product_id: str
     product_name: str
@@ -63,6 +71,7 @@ class ProductLicenseInfo(BaseModel):
     days_remaining: int | None = None
     device_name: str | None = None
     rebind_remaining: int | None = None
+    specialties: list[ProductSpecialtyInfo] = []
 
 
 class LicenseStatusAllResponse(BaseModel):

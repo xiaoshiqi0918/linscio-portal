@@ -1,4 +1,5 @@
 import axios from 'axios'
+import { ElMessage } from 'element-plus'
 
 const api = axios.create({
   baseURL: import.meta.env.VITE_API_BASE || '',
@@ -11,12 +12,26 @@ api.interceptors.request.use((config) => {
   return config
 })
 
+function formatErrorDetail(detail: unknown): string {
+  if (typeof detail === 'string') return detail
+  if (Array.isArray(detail))
+    return detail.map((x: { msg?: string }) => x?.msg).filter(Boolean).join('; ') || '请求失败'
+  return '没有权限'
+}
+
 api.interceptors.response.use(
   (res) => res,
   (err) => {
-    if (err.response?.status === 401 || err.response?.status === 403) {
+    const status = err.response?.status
+    // 401：会话失效，需重新登录。403：多为管理端 IP 白名单等，不应清 token（否则表现为「登录后立刻被踢出」）
+    if (status === 401) {
       localStorage.removeItem('admin_session_token')
       window.location.href = '/login'
+      return Promise.reject(err)
+    }
+    if (status === 403) {
+      ElMessage.error(formatErrorDetail(err.response?.data?.detail))
+      return Promise.reject(err)
     }
     return Promise.reject(err)
   },
@@ -35,6 +50,8 @@ export const getStatsOverview = () => api.get('/admin/stats/overview')
 export const getUsers = (params: any) => api.get('/admin/users', { params })
 export const banUser = (id: number, data: any) => api.post(`/admin/users/${id}/ban`, data)
 export const unbanUser = (id: number) => api.post(`/admin/users/${id}/unban`)
+export const deleteUser = (id: number, data?: { reason?: string }) =>
+  api.post(`/admin/users/${id}/delete`, data ?? {})
 
 // Licenses
 export const generateLicenses = (data: any) => api.post('/admin/licenses/generate', data)

@@ -8,11 +8,11 @@ pydantic>=2.10.0
 pydantic-settings>=2.7.0
 python-dotenv>=1.0.0
 passlib[bcrypt]
-bcrypt<5>=1.7.4
+# passlib 1.7.x 依赖 bcrypt.__about__.__version__；bcrypt 4.1+ 已移除，会报 AttributeError
+bcrypt>=4.0.0,<4.1
 python-multipart>=0.0.20
 apscheduler>=3.10.0
 cos-python-sdk-v5>=1.9.0
-aiosmtplib>=3.0.0
 jinja2>=3.1.0
 httpx>=0.28.0
 email-validator>=2.2.0

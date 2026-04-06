@@ -46,7 +46,7 @@ async function handleLogin() {
   error.value = ''
   try {
     const { data } = await authLogin(form)
-    auth.setSession(data.session_token, data.is_admin)
+    auth.setSession(data.session_token, data.is_admin, form.email.trim())
     const redirect = (route.query.redirect as string) || '/'
     router.push(redirect)
   } catch (e: any) {

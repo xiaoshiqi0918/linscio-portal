@@ -1,147 +1,126 @@
 <template>
-  <el-container style="height: 100vh;">
-    <el-aside width="220px" class="sidebar">
+  <div class="admin-layout">
+    <aside class="sidebar">
       <div class="sidebar-logo">
-        <span class="logo-text">LinScio</span>
+        <span class="logo-brand">LinScio</span>
         <span class="logo-badge">Admin</span>
       </div>
-      <el-menu
-        :default-active="route.path"
-        background-color="#001529"
-        text-color="#ffffffb3"
-        active-text-color="#fff"
-        router
-      >
-        <el-menu-item index="/dashboard">
-          <span class="menu-icon">📊</span>
-          <span>数据概览</span>
-        </el-menu-item>
-        <el-menu-item index="/users">
-          <span class="menu-icon">👥</span>
-          <span>用户管理</span>
-        </el-menu-item>
-        <el-menu-item index="/licenses">
-          <span class="menu-icon">🔑</span>
-          <span>授权码管理</span>
-        </el-menu-item>
-        <el-menu-item index="/devices">
-          <span class="menu-icon">💻</span>
-          <span>设备管理</span>
-        </el-menu-item>
-        <el-menu-item index="/migrations">
-          <span class="menu-icon">🔄</span>
-          <span>账号迁移</span>
-        </el-menu-item>
-        <el-menu-item index="/specialties">
-          <span class="menu-icon">📚</span>
-          <span>学科包管理</span>
-        </el-menu-item>
-        <el-menu-item index="/releases">
-          <span class="menu-icon">📦</span>
-          <span>软件安装包</span>
-        </el-menu-item>
-        <el-menu-item index="/products">
-          <span class="menu-icon">🏷</span>
-          <span>产品管理</span>
-        </el-menu-item>
-        <el-sub-menu index="logs">
-          <template #title>
-            <span class="menu-icon">📝</span>
-            <span>日志</span>
-          </template>
-          <el-menu-item index="/logs/downloads">下载日志</el-menu-item>
-          <el-menu-item index="/logs/admin">操作日志</el-menu-item>
-        </el-sub-menu>
-        <el-menu-item index="/security">
-          <span class="menu-icon">🛡</span>
-          <span>系统安全</span>
-        </el-menu-item>
-      </el-menu>
-    </el-aside>
-    <el-container>
-      <el-header class="topbar">
-        <span class="topbar-title">{{ pageTitle }}</span>
-        <el-button text @click="handleLogout">退出登录</el-button>
-      </el-header>
-      <el-main style="background:#f5f5f5; overflow-y: auto;">
-        <router-view />
-      </el-main>
-    </el-container>
-  </el-container>
+
+      <nav class="sidebar-nav">
+        <div class="nav-group">
+          <p class="nav-group__label">概览</p>
+          <router-link to="/dashboard" class="nav-item" exact-active-class="active">
+            <span class="nav-dot"></span>数据概览
+          </router-link>
+        </div>
+
+        <div class="nav-group">
+          <p class="nav-group__label">用户与授权</p>
+          <router-link to="/users" class="nav-item" active-class="active">
+            <span class="nav-dot"></span>用户管理
+          </router-link>
+          <router-link to="/licenses" class="nav-item" active-class="active">
+            <span class="nav-dot"></span>授权码管理
+          </router-link>
+          <router-link to="/devices" class="nav-item" active-class="active">
+            <span class="nav-dot"></span>设备管理
+          </router-link>
+          <router-link to="/migrations" class="nav-item" active-class="active">
+            <span class="nav-dot"></span>账号迁移审批
+          </router-link>
+        </div>
+
+        <div class="nav-group">
+          <p class="nav-group__label">内容发布</p>
+          <router-link to="/specialties" class="nav-item" active-class="active">
+            <span class="nav-dot"></span>学科包管理
+          </router-link>
+          <router-link to="/bundles" class="nav-item" active-class="active">
+            <span class="nav-dot"></span>组件包管理
+          </router-link>
+          <router-link to="/releases" class="nav-item" active-class="active">
+            <span class="nav-dot"></span>软件安装包
+          </router-link>
+        </div>
+
+        <div class="nav-group">
+          <p class="nav-group__label">系统</p>
+          <router-link to="/logs/downloads" class="nav-item" active-class="active">
+            <span class="nav-dot"></span>下载日志
+          </router-link>
+          <router-link to="/security" class="nav-item" active-class="active">
+            <span class="nav-dot"></span>系统安全
+          </router-link>
+        </div>
+      </nav>
+    </aside>
+
+    <main class="admin-main">
+      <router-view />
+    </main>
+  </div>
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
-import { useAdminAuth } from '@/stores/auth'
-
+import { useRoute } from 'vue-router'
 const route = useRoute()
-const router = useRouter()
-const auth = useAdminAuth()
-
-const titleMap: Record<string, string> = {
-  '/dashboard': '数据概览',
-  '/users': '用户管理',
-  '/licenses': '授权码管理',
-  '/devices': '设备管理',
-  '/migrations': '账号迁移审批',
-  '/specialties': '学科包管理',
-  '/releases': '软件安装包',
-  '/products': '产品管理',
-  '/logs/downloads': '下载日志',
-  '/logs/admin': '操作日志',
-  '/security': '系统安全',
-}
-
-const pageTitle = computed(() => titleMap[route.path] || 'LinScio Admin')
-
-function handleLogout() {
-  auth.clear()
-  router.push('/login')
-}
 </script>
 
 <style scoped>
+.admin-layout {
+  display: flex; min-height: 100vh;
+}
+
 .sidebar {
-  background: #001529;
+  width: 200px; flex-shrink: 0;
+  background: var(--bg-dark); border-right: 1px solid var(--bg-dark-secondary);
+  display: flex; flex-direction: column;
   overflow-y: auto;
 }
+
 .sidebar-logo {
-  height: 56px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-  border-bottom: 1px solid rgba(255,255,255,0.08);
+  height: 52px; display: flex; align-items: center;
+  padding: 0 20px; gap: 8px;
+  border-bottom: 1px solid var(--bg-dark-secondary);
 }
-.logo-text {
-  font-size: 17px;
-  font-weight: 700;
-  color: #fff;
-  letter-spacing: -0.5px;
+.logo-brand {
+  font-size: 17px; font-weight: 700; color: #5ED1A5;
+  font-style: italic; letter-spacing: -0.5px;
 }
 .logo-badge {
-  font-size: 11px;
-  font-weight: 600;
-  color: #1a56db;
-  background: rgba(26,86,219,0.15);
-  padding: 1px 6px;
-  border-radius: 4px;
+  font-size: 11px; font-weight: 500; color: var(--text-on-dark-muted);
+  border: 1px solid rgba(255,255,255,0.15); padding: 1px 8px; border-radius: 4px;
 }
-.menu-icon {
-  margin-right: 8px;
-  font-size: 14px;
+
+.sidebar-nav { padding: 16px 0; flex: 1; }
+
+.nav-group { margin-bottom: 20px; }
+.nav-group__label {
+  padding: 0 20px; font-size: 11px; color: var(--text-on-dark-muted);
+  text-transform: uppercase; letter-spacing: 1px;
+  margin-bottom: 6px;
 }
-.topbar {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  border-bottom: 1px solid #e5e7eb;
-  background: #fff;
+
+.nav-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 8px 20px; font-size: 14px;
+  color: var(--text-on-dark-muted); text-decoration: none;
+  transition: all 0.15s; border-left: 3px solid transparent;
 }
-.topbar-title {
-  font-size: 16px;
-  font-weight: 600;
-  color: #111827;
+.nav-item:hover { color: var(--text-on-dark); }
+.nav-item.active {
+  color: #fff; background: var(--bg-dark-secondary);
+  border-left-color: #5ED1A5;
+}
+.nav-dot {
+  width: 5px; height: 5px; border-radius: 50%;
+  background: rgba(255,255,255,0.2); flex-shrink: 0;
+}
+.nav-item.active .nav-dot { background: #5ED1A5; }
+
+.admin-main {
+  flex: 1; background: var(--bg-alt);
+  overflow-y: auto; padding: 32px 40px;
+  color: var(--text-primary);
 }
 </style>

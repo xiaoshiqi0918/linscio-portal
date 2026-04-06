@@ -22,7 +22,7 @@
             <el-table-column prop="email" />
             <el-table-column width="160">
               <template #default="{ row }">
-                <span style="font-size: 12px; color: #9ca3af;">{{ formatTime(row.created_at) }}</span>
+                <span style="font-size: 12px; color: var(--text-muted);">{{ formatTime(row.created_at) }}</span>
               </template>
             </el-table-column>
             <el-table-column width="80">
@@ -33,7 +33,7 @@
               </template>
             </el-table-column>
           </el-table>
-          <div v-if="!recentUsers.length" style="text-align:center;padding:20px;color:#9ca3af;font-size:13px;">暂无数据</div>
+          <div v-if="!recentUsers.length" style="text-align:center;padding:20px;color:var(--text-muted);font-size:13px;">暂无数据</div>
         </el-card>
       </el-col>
       <el-col :span="12">
@@ -49,16 +49,16 @@
             </el-table-column>
             <el-table-column>
               <template #default="{ row }">
-                <span style="font-size:12px;color:#6b7280;">{{ row.target_type }} {{ row.target_id }}</span>
+                <span style="font-size:12px;color:var(--text-secondary);">{{ row.target_type }} {{ row.target_id }}</span>
               </template>
             </el-table-column>
             <el-table-column width="140">
               <template #default="{ row }">
-                <span style="font-size:12px;color:#9ca3af;">{{ formatTime(row.created_at) }}</span>
+                <span style="font-size:12px;color:var(--text-muted);">{{ formatTime(row.created_at) }}</span>
               </template>
             </el-table-column>
           </el-table>
-          <div v-if="!recentLogs.length" style="text-align:center;padding:20px;color:#9ca3af;font-size:13px;">暂无数据</div>
+          <div v-if="!recentLogs.length" style="text-align:center;padding:20px;color:var(--text-muted);font-size:13px;">暂无数据</div>
         </el-card>
       </el-col>
     </el-row>
@@ -75,10 +75,11 @@ const stats = ref<Record<string, number>>({
 })
 
 const statCards = [
-  { key: 'total_users', label: '注册用户', icon: '👥', bg: '#e1effe', color: '#1a56db' },
+  { key: 'total_users', label: '活跃用户', icon: '👥', bg: '#e1effe', color: '#1a56db' },
   { key: 'active_licenses', label: '有效授权', icon: '🔑', bg: '#d1fae5', color: '#059669' },
   { key: 'expiring_soon', label: '即将到期（30天）', icon: '⏰', bg: '#fef3c7', color: '#d97706' },
   { key: 'monthly_downloads', label: '本月软件下载', icon: '📥', bg: '#e1effe', color: '#1a56db' },
+  { key: 'monthly_bundle_downloads', label: '本月组件包下载', icon: '🎨', bg: '#fce7f3', color: '#db2777' },
   { key: 'monthly_specialty_downloads', label: '本月学科包下载', icon: '📚', bg: '#ede9fe', color: '#7c3aed' },
   { key: 'download_success_rate', label: '下载成功率', icon: '✅', bg: '#d1fae5', color: '#059669', suffix: '%' },
 ]
@@ -129,12 +130,12 @@ onMounted(async () => {
 .stat-card__value {
   font-size: 24px;
   font-weight: 700;
-  color: #111827;
+  color: var(--text-primary);
   line-height: 1;
 }
 .stat-card__label {
   font-size: 13px;
-  color: #6b7280;
+  color: var(--text-secondary);
   margin-top: 4px;
 }
 </style>

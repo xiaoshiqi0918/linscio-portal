@@ -1,31 +1,60 @@
-# Dependencies
+# ── 依赖 ──
 node_modules/
 venv/
+.venv/
 __pycache__/
 *.pyc
+*.pyo
 
-# Build output
+# ── 构建产物 ──
 dist/
 *.egg-info/
+portal/dist/
+medcomm-site/dist/
+admin/dist/
+*.zip
 
-# Environment
+# ── 环境变量 / 敏感信息 ──
 .env
-*.env.local
+.env.*
+!.env.example
+secrets/
+*.pem
+*.key
+*.p12
+*.pfx
 
-# IDE
+# ── IDE ──
 .vscode/
 .idea/
 *.swp
 *.swo
 .DS_Store
+Thumbs.db
 
-# Logs
+# ── 日志 ──
 *.log
 logs/
 
-# Database
+# ── 数据库（运行时数据，不入库） ──
 *.db
 *.sqlite
+*.sqlite3
+api/.data/
+api/data/
 
-# Package locks (keep one per project)
-# package-lock.json
+# ── 备份 ──
+backups/
+*.bak
+
+# ── Python ──
+*.egg
+*.whl
+pip-log.txt
+pip-delete-this-directory.txt
+
+# ── 系统 ──
+.DS_Store
+Thumbs.db
+ehthumbs.db
+Desktop.ini

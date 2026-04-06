@@ -1,43 +1,46 @@
 <template>
   <div class="page">
     <h1 class="page__title">我的授权</h1>
-    <p class="page__subtitle">查看您的产品授权状态</p>
+    <p class="page__subtitle">以下是你名下所有产品的授权状态。</p>
 
-    <div v-if="loading" class="text-center text-muted mt-3">加载中...</div>
+    <div v-if="loading" class="text-muted mt-3">加载中...</div>
 
-    <div v-else class="license-grid">
-      <div v-for="lic in licenses" :key="lic.product_id" class="card license-card">
-        <div class="license-card__header">
-          <h3>{{ lic.product_name }}</h3>
-          <span class="badge" :class="statusClass(lic.status)">{{ statusText(lic.status) }}</span>
+    <div v-else class="license-list">
+      <div v-for="lic in licenses" :key="lic.product_id" class="license-card card">
+        <!-- Card header -->
+        <div class="lc-header">
+          <div class="lc-name">
+            <span class="dot" :class="dotClass(lic.status)"></span>
+            <span>{{ lic.product_name }}</span>
+          </div>
+          <span class="badge" :class="badgeClass(lic.status)">{{ statusText(lic.status) }}</span>
         </div>
 
-        <div v-if="lic.status !== 'not_activated'" class="license-card__body">
-          <div class="info-row">
-            <span class="info-label">到期时间</span>
-            <span>{{ lic.expires_at ? formatDate(lic.expires_at) : '-' }}</span>
+        <!-- Info grid -->
+        <div class="lc-info">
+          <div class="lc-info__item">
+            <span class="lc-label">到期时间</span>
+            <span class="lc-value" :class="{ 'lc-value--danger': lic.status === 'expired' }">
+              {{ lic.status !== 'not_activated' && lic.expires_at ? formatDate(lic.expires_at) : '--' }}
+            </span>
           </div>
-          <div class="info-row">
-            <span class="info-label">剩余天数</span>
-            <span>{{ lic.days_remaining ?? '-' }} 天</span>
+          <div class="lc-info__item">
+            <span class="lc-label">{{ lic.status === 'expired' ? '已过期' : '剩余天数' }}</span>
+            <span class="lc-value" :class="{ 'lc-value--danger': lic.status === 'expired' }">
+              {{ lic.status !== 'not_activated' ? daysDisplay(lic) : '--' }}
+            </span>
           </div>
-          <div class="info-row">
-            <span class="info-label">绑定设备</span>
-            <span>{{ lic.device_name || '未绑定' }}</span>
-          </div>
-          <div class="info-row">
-            <span class="info-label">剩余换绑</span>
-            <span>{{ lic.rebind_remaining ?? '-' }} 次</span>
+          <div class="lc-info__item">
+            <span class="lc-label">授权类型</span>
+            <span class="lc-value">{{ licenseType(lic) }}</span>
           </div>
         </div>
 
-        <div v-else class="license-card__body">
-          <p class="text-muted">尚未激活此产品，请使用授权码激活。</p>
-        </div>
-
-        <div class="license-card__footer">
-          <router-link to="/license/activate" class="btn btn--primary">
-            {{ lic.status === 'not_activated' ? '激活授权码' : '续费 / 激活' }}
+        <!-- Footer -->
+        <div class="lc-footer">
+          <p class="lc-hint">{{ hintText(lic.status) }}</p>
+          <router-link to="/license/activate" class="btn btn--ghost">
+            {{ lic.status === 'not_activated' ? '激活授权码' : '激活续费码' }}
           </router-link>
         </div>
       </div>
@@ -71,66 +74,89 @@ onMounted(async () => {
   loading.value = false
 })
 
-function statusClass(s: string) {
-  const map: Record<string, string> = {
-    valid: 'badge--valid', expired: 'badge--expired',
-    trial: 'badge--trial', not_activated: 'badge--inactive',
-  }
-  return map[s] || ''
+function dotClass(s: string) {
+  return { valid: 'dot--green', expired: 'dot--red', trial: 'dot--yellow', not_activated: 'dot--gray' }[s] || ''
+}
+
+function badgeClass(s: string) {
+  return { valid: 'badge--valid', expired: 'badge--expired', trial: 'badge--trial', not_activated: 'badge--inactive' }[s] || ''
 }
 
 function statusText(s: string) {
-  const map: Record<string, string> = {
-    valid: '有效', expired: '已到期', trial: '试用中', not_activated: '未激活',
+  return { valid: '授权有效', expired: '授权已到期', trial: '试用中', not_activated: '未激活' }[s] || s
+}
+
+function licenseType(lic: LicenseInfo) {
+  if (lic.status === 'not_activated') return '--'
+  return lic.is_trial ? '试用版' : '正式版'
+}
+
+function daysDisplay(lic: LicenseInfo) {
+  if (lic.days_remaining === null || lic.days_remaining === undefined) return '--'
+  if (lic.status === 'expired') return `${Math.abs(lic.days_remaining)} 天`
+  return `${lic.days_remaining} 天`
+}
+
+function hintText(s: string) {
+  const hints: Record<string, string> = {
+    valid: '续费请联系我们获取授权码，激活后有效期自动叠加。',
+    expired: '软件仍可正常使用，续费后恢复更新通道。',
+    trial: '试用期间可体验全部功能，到期后需激活正式授权码。',
+    not_activated: '尚未激活此产品。如需使用请联系我们获取授权码。',
   }
-  return map[s] || s
+  return hints[s] || ''
 }
 
 function formatDate(iso: string) {
-  return new Date(iso).toLocaleDateString('zh-CN')
+  return iso.slice(0, 10)
 }
 </script>
 
 <style scoped lang="scss">
-.license-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
-  gap: 20px;
+.license-list {
+  display: flex; flex-direction: column; gap: 20px;
 }
 
 .license-card {
-  display: flex;
-  flex-direction: column;
-
-  &__header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 16px;
-
-    h3 { font-size: 18px; font-weight: 600; }
-  }
-
-  &__body {
-    flex: 1;
-    margin-bottom: 16px;
-  }
-
-  &__footer {
-    display: flex;
-    gap: 8px;
-  }
+  padding: 28px 32px;
 }
 
-.info-row {
-  display: flex;
-  justify-content: space-between;
-  padding: 6px 0;
-  font-size: 13px;
-  border-bottom: 1px solid var(--border);
+.lc-header {
+  display: flex; justify-content: space-between; align-items: center;
+  margin-bottom: 24px;
+}
+.lc-name {
+  display: flex; align-items: center; gap: 10px;
+  font-size: 18px; font-weight: 500; color: var(--text-secondary);
+}
+.dot {
+  width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0;
+}
+.dot--green { background: var(--success); }
+.dot--red { background: var(--danger); }
+.dot--yellow { background: var(--warning); }
+.dot--gray { background: var(--border); }
 
-  &:last-child { border-bottom: none; }
+.lc-info {
+  display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0;
+  margin-bottom: 24px;
+}
+.lc-info__item {
+  display: flex; flex-direction: column; gap: 4px;
+}
+.lc-label {
+  font-size: 12px; color: var(--text-muted);
+}
+.lc-value {
+  font-size: 14px; color: var(--text-secondary); font-weight: 500;
+  &--danger { color: var(--danger); }
 }
 
-.info-label { color: var(--text-secondary); }
+.lc-footer {
+  display: flex; justify-content: space-between; align-items: center;
+  margin-top: 8px;
+}
+.lc-hint {
+  font-size: 13px; color: var(--text-muted); max-width: 400px; line-height: 1.6;
+}
 </style>
