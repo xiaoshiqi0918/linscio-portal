@@ -16,8 +16,11 @@ admin/dist/
 
 # ── 环境变量 / 敏感信息 ──
 .env
-.env.*
+.env.local
+.env.*.local
 !.env.example
+!.env.production
+!.env.development
 secrets/
 *.pem
 *.key
