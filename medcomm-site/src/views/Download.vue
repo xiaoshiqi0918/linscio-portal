@@ -30,23 +30,6 @@
         </div>
       </div>
 
-      <!-- ComfyUI 组件包 -->
-      <template v-if="bundles.length">
-        <h2 class="section-label">MedPic 绘图组件包（可选）</h2>
-        <p class="section-note">安装客户端后可按需下载。基础包随 MedComm 授权开放，进阶包需额外授权。</p>
-        <div class="download-list">
-          <div v-for="b in bundles" :key="b.id" class="download-card">
-            <div class="download-icon">🎨</div>
-            <div class="download-info">
-              <h3>{{ b.name }}</h3>
-              <p class="download-desc">{{ b.description }}</p>
-              <p class="download-meta">v{{ b.version }} · 需在客户端内下载安装</p>
-            </div>
-            <span class="download-btn download-btn--disabled">客户端内安装</span>
-          </div>
-        </div>
-      </template>
-
       <!-- 更新日志 -->
       <div v-if="changelog.length" class="release-notes">
         <h3>更新日志</h3>
@@ -71,8 +54,8 @@
             <div class="sys-table">
               <div class="sys-row"><span>最低系统版本</span><span>macOS 12</span></div>
               <div class="sys-row"><span>支持芯片</span><span>Apple Silicon（M1 / M2 / M3 / M4）</span></div>
-              <div class="sys-row"><span>磁盘空间</span><span>客户端 500 MB · MedPic 需额外 5 GB+</span></div>
-              <div class="sys-row"><span>内存</span><span>8 GB 以上（MedPic 建议 16 GB）</span></div>
+              <div class="sys-row"><span>磁盘空间</span><span>500 MB 以上</span></div>
+              <div class="sys-row"><span>内存</span><span>8 GB 以上</span></div>
             </div>
           </div>
           <div class="sys-col">
@@ -80,12 +63,12 @@
             <div class="sys-table">
               <div class="sys-row"><span>最低系统版本</span><span>Windows 10</span></div>
               <div class="sys-row"><span>架构</span><span>x64</span></div>
-              <div class="sys-row"><span>磁盘空间</span><span>客户端 500 MB · MedPic 需额外 5 GB+</span></div>
-              <div class="sys-row"><span>内存</span><span>8 GB 以上（MedPic 建议 16 GB）</span></div>
+              <div class="sys-row"><span>磁盘空间</span><span>500 MB 以上</span></div>
+              <div class="sys-row"><span>内存</span><span>8 GB 以上</span></div>
             </div>
           </div>
         </div>
-        <p class="sys-note">* macOS Intel 版本暂停开发，后续视需求开放。MedPic 绘图功能（ComfyUI）为可选组件，未安装不影响其他功能使用。</p>
+        <p class="sys-note">* macOS Intel 版本暂停开发，后续视需求开放。绘图模块目前处于开发阶段。</p>
       </section>
     </main>
     <SiteFooter />
@@ -97,7 +80,7 @@ import { ref, onMounted } from 'vue'
 import SiteHeader from '@/components/layout/SiteHeader.vue'
 import SiteFooter from '@/components/layout/SiteFooter.vue'
 
-const productVersion = ref('0.1.1')
+const productVersion = ref('0.1.2')
 const loading = ref(true)
 
 interface PlatformItem {
@@ -107,13 +90,6 @@ interface PlatformItem {
   icon: string
   filename: string
   status: string
-}
-
-interface BundleItem {
-  id: string
-  name: string
-  description: string
-  version: string
 }
 
 interface ChangelogEntry {
@@ -127,7 +103,6 @@ const platforms = ref<PlatformItem[]>([
   { id: 'win-x64', name: 'Windows', desc: '适用于 Windows 10 / 11 · x64', icon: '⊞', filename: '', status: 'available' },
 ])
 
-const bundles = ref<BundleItem[]>([])
 const changelog = ref<ChangelogEntry[]>([])
 
 onMounted(async () => {
@@ -146,11 +121,6 @@ onMounted(async () => {
           if (statusMap[p.id]) p.status = statusMap[p.id]
         }
         changelog.value = medcomm.changelog || []
-      }
-      if (data.bundles) {
-        bundles.value = data.bundles
-          .filter((b: any) => b.product_id?.toLowerCase() === 'medcomm')
-          .map((b: any) => ({ id: b.id, name: b.name, description: b.description, version: b.version }))
       }
     }
   } catch {

@@ -1,40 +1,59 @@
 {
   "schema_version": "2.0",
-  "min_client_version": "0.1.1",
+  "min_client_version": "0.1.2",
   "products": [
     {
       "id": "MedComm",
       "name": "LinScio MedComm",
-      "latest_version": "0.1.1",
-      "published_at": "2026-04-04",
-      "release_notes": "新增 MedPic 医学绘图模块（ComfyUI 集成）、AI 智能提示词、修复多项已知问题",
-      "platforms": ["mac-arm64", "win-x64"],
+      "latest_version": "0.1.2",
+      "published_at": "2026-04-10",
+      "release_notes": "智能 LLM 模型路由、多格式科普写作全面优化、文献全文增强获取、创作库管理升级",
+      "platforms": ["mac-arm64", "mac-x64", "win-x64"],
       "platform_status": {
         "mac-arm64": "available",
-        "mac-x64": "suspended",
+        "mac-x64": "available",
         "win-x64": "available"
       },
       "download_files": {
-        "mac-arm64": "LinScio-MedComm-0.1.1-mac-arm64.dmg",
-        "win-x64": "LinScio-MedComm-0.1.1-win-x64.exe"
+        "mac-arm64": "LinScio-MedComm-0.1.2-mac-arm64.dmg",
+        "mac-x64": "LinScio-MedComm-0.1.2-mac-x64.dmg",
+        "win-x64": "LinScio-MedComm-0.1.2-win-x64.exe"
       },
       "update_files": {
         "mac-arm64": {
-          "filename": "LinScio-MedComm-0.1.1-mac-arm64.zip",
+          "filename": "LinScio-MedComm-0.1.2-mac-arm64.zip",
+          "size_bytes": 0,
+          "sha256": ""
+        },
+        "mac-x64": {
+          "filename": "LinScio-MedComm-0.1.2-mac-x64.zip",
           "size_bytes": 0,
           "sha256": ""
         },
         "win-x64": {
-          "filename": "LinScio-MedComm-0.1.1-win-x64.exe",
+          "filename": "LinScio-MedComm-0.1.2-win-x64.exe",
           "size_bytes": 0,
           "sha256": ""
         }
       },
       "system_requirements": {
-        "mac": { "os_min": "macOS 12", "chip": "Apple Silicon", "ram_min": "8 GB", "disk_min": "500 MB" },
+        "mac": { "os_min": "macOS 12", "chip": "Apple Silicon 或 Intel", "ram_min": "8 GB", "disk_min": "500 MB" },
         "win": { "os_min": "Windows 10", "arch": "x64", "ram_min": "8 GB", "disk_min": "500 MB" }
       },
       "changelog": [
+        {
+          "version": "0.1.2",
+          "changes": [
+            "新增智能 LLM 模型路由，按任务类型自动选择最优模型",
+            "全面优化 12 种科普内容格式写作流程（科普故事、辟谣文、研究速读、条漫、知识卡片、科普海报、科普绘本、竖版长图、口播脚本、情景剧本、动画分镜、患者手册）",
+            "新增文章目标字数控制，严格遵循字数上限",
+            "增强文献全文获取成功率（多通道 Unpaywall / Semantic Scholar / CrossRef）",
+            "创作库升级：表格视图、Word 全文预览、删除与批量删除",
+            "绘图模块重构为文生图 / 图生图，支持多 API 提供商（开发中）",
+            "移除内置 ComfyUI 打包，改为连接外部实例",
+            "移除发布管理模块"
+          ]
+        },
         {
           "version": "0.1.1",
           "changes": [
@@ -52,36 +71,7 @@
       ]
     }
   ],
-  "bundles": [
-    {
-      "id": "comfyui-basic",
-      "product_id": "MedComm",
-      "name": "ComfyUI 基础绘图组件包",
-      "type": "basic",
-      "version": "0.3.10",
-      "min_client_version": "0.1.1",
-      "description": "ComfyUI 引擎 + SD1.5 基础模型 + 预设工作流",
-      "authorization": "included",
-      "platforms": {
-        "mac-arm64": {
-          "filename": "comfyui-bundle-0.3.10-mac-arm64.zip",
-          "size_bytes": 0,
-          "sha256": ""
-        },
-        "win-x64": {
-          "filename": "comfyui-bundle-0.3.10-win-x64.zip",
-          "size_bytes": 0,
-          "sha256": ""
-        }
-      },
-      "changelog": [
-        {
-          "version": "0.3.10",
-          "changes": ["首版发布：ComfyUI 0.3.10 + SD1.5 模型 + 7 种预设场景工作流"]
-        }
-      ]
-    }
-  ],
+  "bundles": [],
   "specialties": [
     {
       "id": "endocrinology",

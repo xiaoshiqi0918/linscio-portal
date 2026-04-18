@@ -5,11 +5,11 @@
     <!-- Hero -->
     <section class="hero">
       <div class="container">
-        <div class="hero-tag">LinScio MedComm</div>
-        <h1 class="hero-title">结构化内容创作，<br/>专注表达本身</h1>
+        <div class="hero-tag">LinScio MedComm · 科普内容创作助手</div>
+        <h1 class="hero-title">一键生成全文，<br/>自动去AI化改写</h1>
         <p class="hero-sub">
-          MedComm 帮助你快速组织思路、生成规范内容、支持学科<br/>
-          包按需扩展、适配不同专业场景。
+          从模板选择到全文生成，内置去AI化改写引擎自动降低AIGC检测率，<br/>
+          配合段落级AIGC检测精准定位，多平台适配，多格式导出。
         </p>
         <div class="hero-actions">
           <router-link to="/download" class="btn-ghost">下载软件</router-link>
@@ -75,18 +75,18 @@
           </div>
           <div class="sys-row">
             <div>磁盘空间</div>
-            <div>客户端 500 MB · MedPic 额外 5 GB+</div>
+            <div>500 MB 以上</div>
             <div>磁盘空间</div>
-            <div>客户端 500 MB · MedPic 额外 5 GB+</div>
+            <div>500 MB 以上</div>
           </div>
           <div class="sys-row">
             <div>内存</div>
-            <div>8 GB（MedPic 建议 16 GB）</div>
+            <div>8 GB 以上</div>
             <div>内存</div>
-            <div>8 GB（MedPic 建议 16 GB）</div>
+            <div>8 GB 以上</div>
           </div>
         </div>
-        <p class="sys-note">* macOS Intel 版本暂停开发。MedPic 绘图功能（ComfyUI）为可选组件，未安装不影响其他功能。</p>
+        <p class="sys-note">* macOS Intel 版本暂停开发。绘图模块目前处于开发阶段。</p>
       </div>
     </section>
 
@@ -115,12 +115,12 @@ import SiteHeader from '@/components/layout/SiteHeader.vue'
 import SiteFooter from '@/components/layout/SiteFooter.vue'
 
 const features = [
-  { icon: '📋', title: '结构化输出', desc: '内容按层级模板生成，格式统一、减少反复调整的时间。' },
-  { icon: '🎨', title: 'MedPic 医学绘图', desc: '基于 ComfyUI 的本地 AI 绘图引擎，数据不出本机。AI 智能提示词 + 多场景预设工作流，无需绘图经验。' },
-  { icon: '📦', title: '学科包扩展', desc: '按专业方向独立购买，内容本地存储、离线可用，更新不覆盖自建内容。' },
-  { icon: '◎', title: '本地优先', desc: '数据存储在本地，不依赖持续联网，断网状态下正常使用。' },
-  { icon: '⊘', title: '内容隔离', desc: '各类内容与学科包内容严格分开，更新学科包不影响你的原有数据。' },
-  { icon: '🔓', title: '授权到期不锁功能', desc: '授权到期后软件仍可正常使用，仅暂停更新通道，续费后恢复。' },
+  { icon: '⚡', title: '一键生成全文', desc: '选择主题和模板后一键生成完整文章，流式实时预览写作过程，所见即所得。' },
+  { icon: '🔄', title: '去AI化改写', desc: '内置多轮改写引擎，自动优化句式节奏、段落衔接与叙事结构，降低AIGC检测率。' },
+  { icon: '🔍', title: 'AIGC 段落检测', desc: '段落级AI内容检测，精准定位问题段落，支持针对性手动或AI辅助改写。' },
+  { icon: '📋', title: '模板库管理', desc: '自定义章节结构与配置预设，支持拖拽排序，模板驱动内容生成流程。' },
+  { icon: '📤', title: '多格式导出', desc: '支持 Word、HTML、Markdown、纯文本导出，参考文献从绑定面板自动附加。' },
+  { icon: '🎯', title: '多平台适配', desc: '适配微信公众号、知乎、小红书等平台风格，一篇内容多场景复用。' },
 ]
 
 const specialties = [

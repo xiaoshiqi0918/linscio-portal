@@ -27,6 +27,7 @@ class BundleUpdateInfo(BaseModel):
     name: str = ""
     latest_version: str
     has_update: bool
+    platform: str | None = None
     size_bytes: int = 0
     sha256: str = ""
     download_url: str | None = None

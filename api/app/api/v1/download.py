@@ -227,7 +227,8 @@ async def download_bundle(
 
     filename = plat_info.get("filename", "")
     version = bundle_info.get("version", "0.0.0")
-    cos_key = f"bundles/{req.product_id}/{req.bundle_id}/v{version}/{filename}"
+    manifest_product_id = bundle_info.get("product_id") or req.product_id
+    cos_key = f"bundles/{manifest_product_id}/{req.bundle_id}/v{version}/{filename}"
     download_url = generate_presigned_download_url(cos_key, expires=86400)
 
     log = DownloadLog(

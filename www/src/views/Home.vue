@@ -77,7 +77,7 @@ const products = [
   {
     id: 'medcomm', name: 'MedComm',
     icon: '📋', bgColor: '#e8f5e9', iconColor: '#2e7d32',
-    desc: '结构化内容创作工具，支持多种输出格式，学科包按需扩展',
+    desc: '科普内容创作助手，一键生成全文并自动去AI化改写，支持AIGC检测与多格式导出',
     link: import.meta.env.VITE_URL_MEDCOMM,
     domain: 'medcomm.linscio.com.cn',
   },

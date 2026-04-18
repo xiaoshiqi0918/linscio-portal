@@ -179,14 +179,22 @@ async def check_update(
             has_bundle_update = local_ver is None or _compare_versions(local_ver, remote_ver)
 
             plat_info = (bundle_data.get("platforms") or {}).get(req.platform, {})
+            filename = (plat_info.get("filename") or "").strip()
+            bundle_product_id = bundle_data.get("product_id") or canonical_id or req.product_id
+            bundle_download_url: str | None = None
+            if filename:
+                cos_key = f"bundles/{bundle_product_id}/{bid}/v{remote_ver}/{filename}"
+                bundle_download_url = _safe_presigned_url(cos_key)
 
             bundle_updates.append(BundleUpdateInfo(
                 id=bid,
                 name=bundle_data.get("name", ""),
                 latest_version=remote_ver,
                 has_update=has_bundle_update,
+                platform=req.platform,
                 size_bytes=plat_info.get("size_bytes", 0),
                 sha256=plat_info.get("sha256", ""),
+                download_url=bundle_download_url,
                 min_client_version=bundle_data.get("min_client_version"),
             ))
 

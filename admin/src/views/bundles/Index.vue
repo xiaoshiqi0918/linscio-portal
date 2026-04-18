@@ -18,7 +18,7 @@
 
     <el-card shadow="hover" style="margin-bottom: 20px;">
       <template #header>
-        <span style="font-weight: 600;">ComfyUI 组件包</span>
+        <span style="font-weight: 600;">扩展组件包</span>
       </template>
       <el-table :data="bundles" size="small" stripe>
         <el-table-column prop="id" label="ID" width="160" />

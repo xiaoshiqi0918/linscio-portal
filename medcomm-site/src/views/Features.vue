@@ -4,25 +4,25 @@
     <main class="container page">
       <p class="page-label">功能介绍</p>
       <h1 class="page-title">MedComm 能做什么</h1>
-      <p class="page-sub">从内容创作到内容管理，MedComm 覆盖科普写作的完整工作流。</p>
+      <p class="page-sub">从一键生成到去AI化改写，从AIGC检测到多格式导出，MedComm 覆盖科普内容创作的完整工作流。</p>
 
       <!-- 主要功能 -->
       <section class="section">
         <h2 class="section-label">主要功能</h2>
         <div class="hero-grid">
           <div class="hero-card hero-card--green">
-            <span class="hero-tag hero-tag--green">科普写作</span>
-            <h3>结构化科普内容生成</h3>
-            <p>基于模板与知识库，快速生成结构化规范的科普内容，支持多种格式输出与学科包扩展。</p>
+            <span class="hero-tag hero-tag--green">智能写作</span>
+            <h3>一键生成全文</h3>
+            <p>选择主题和模板后一键生成完整文章，流式实时预览写作过程，支持正文、小结等多章节自动衔接。</p>
             <div class="hero-deco hero-deco--green">
               <div class="deco-bar"></div>
               <div class="deco-bar deco-bar--short"></div>
             </div>
           </div>
           <div class="hero-card hero-card--purple">
-            <span class="hero-tag hero-tag--purple">图像生成</span>
-            <h3>配套图像一键生成</h3>
-            <p>根据写作内容自动生成配套图像，无需额外设计工具，图文一体完成创作。</p>
+            <span class="hero-tag hero-tag--purple">去AI化</span>
+            <h3>自动去AI化改写</h3>
+            <p>生成完成后自动进入多轮改写，优化句式节奏、段落衔接与叙事结构，降低AIGC检测率。</p>
             <div class="hero-deco hero-deco--purple">
               <div class="deco-shape"></div>
               <div class="deco-shape deco-shape--sm"></div>
@@ -31,23 +31,23 @@
         </div>
       </section>
 
-      <!-- MedPic 绘图 -->
+      <!-- AI 绘图 -->
       <section class="section">
-        <h2 class="section-label">MedPic 医学绘图</h2>
+        <h2 class="section-label">AI 绘图 <span style="font-size: 11px; color: #e65100; font-weight: 400;">开发中</span></h2>
         <div class="hero-grid">
           <div class="hero-card hero-card--blue">
-            <span class="hero-tag hero-tag--blue">本地绘图</span>
-            <h3>ComfyUI 本地引擎</h3>
-            <p>基于 ComfyUI 的本地 AI 绘图引擎，数据不出本机，保护患者隐私与医疗数据安全。</p>
+            <span class="hero-tag hero-tag--blue">文生图</span>
+            <h3>文字描述生成配图</h3>
+            <p>输入文字描述即可生成科普配图，支持 Midjourney、DALL·E、ComfyUI 等多种外部 API 提供商。</p>
             <div class="hero-deco hero-deco--blue">
               <div class="deco-shape"></div>
               <div class="deco-shape deco-shape--sm"></div>
             </div>
           </div>
           <div class="hero-card hero-card--orange">
-            <span class="hero-tag hero-tag--orange">智能提示词</span>
-            <h3>AI 辅助生成提示词</h3>
-            <p>根据写作主题和场景，AI 智能生成绘图提示词，无需专业绘图经验即可产出高质量配图。</p>
+            <span class="hero-tag hero-tag--orange">图生图</span>
+            <h3>基于参考图的风格转换</h3>
+            <p>上传参考图，通过 AI 进行风格转换和内容优化，快速生成符合场景的科普配图。</p>
             <div class="hero-deco hero-deco--orange">
               <div class="deco-bar"></div>
               <div class="deco-bar deco-bar--short"></div>
@@ -56,24 +56,17 @@
         </div>
         <div class="feature-rows" style="margin-top: 28px;">
           <div class="feature-row">
-            <span class="feature-icon">🎨</span>
+            <span class="feature-icon">🔑</span>
             <div>
-              <h3>多场景预设工作流</h3>
-              <p>内置科普插画、解剖示意、流程图等 7 种医学场景工作流模板，选择场景即可开始绘制。</p>
+              <h3>多提供商支持</h3>
+              <p>支持配置 Midjourney、ComfyUI、DALL·E 等多种绘图 API，按需选择最适合的图像生成服务。</p>
             </div>
           </div>
           <div class="feature-row">
-            <span class="feature-icon">⚡</span>
+            <span class="feature-icon">✨</span>
             <div>
-              <h3>硬件自适应</h3>
-              <p>根据设备性能自动调整绘图参数，普通办公电脑到专业工作站均可使用，步骤和分辨率按硬件档位优化。</p>
-            </div>
-          </div>
-          <div class="feature-row">
-            <span class="feature-icon">📦</span>
-            <div>
-              <h3>按需扩展</h3>
-              <p>基础绘图组件随 MedComm 授权开放；SDXL 进阶包、儿科专包、解剖图谱包等可按需额外授权下载。</p>
+              <h3>智能提示词</h3>
+              <p>根据写作主题和场景，AI 智能生成绘图提示词，无需专业绘图经验即可产出高质量配图。</p>
             </div>
           </div>
         </div>
@@ -81,36 +74,57 @@
 
       <!-- 写作工具 -->
       <section class="section">
-        <h2 class="section-label">写作工具</h2>
+        <h2 class="section-label">写作与编辑</h2>
         <div class="feature-rows">
-          <div class="feature-row">
-            <span class="feature-icon">📋</span>
-            <div>
-              <h3>文献引用管理</h3>
-              <p>内置文献管理系统，写作时可直接引用，确保内容有据可查。支持学科包扩展，按专业方向丰富文献范围。</p>
-            </div>
-          </div>
           <div class="feature-row">
             <span class="feature-icon">🔍</span>
             <div>
-              <h3>确定性验证</h3>
-              <p>对生成内容进行准确性验证，适配不同层面精度的表达风格，让输出内容更自然、更准确。</p>
+              <h3>AIGC 段落检测</h3>
+              <p>段落级AI内容检测，精准定位AIGC特征显著的段落，支持针对性手动改写或AI辅助改写，直到检测通过。</p>
             </div>
           </div>
           <div class="feature-row">
-            <span class="feature-icon">⊞</span>
+            <span class="feature-icon">✍️</span>
             <div>
-              <h3>丰富样式</h3>
-              <p>内置多种结构模版，覆盖独立科目的结构类型，选择模版和主题搭配填充内容，省却从零开始的设计困扰。</p>
+              <h3>AI 写作面板</h3>
+              <p>选中段落即可使用AI改写、润色、扩写、缩写等能力，编辑器实时更新，支持自动保存与手动保存。</p>
+            </div>
+          </div>
+          <div class="feature-row">
+            <span class="feature-icon">📋</span>
+            <div>
+              <h3>模板库管理</h3>
+              <p>自定义章节结构与配置预设，支持拖拽排序编辑，模板驱动内容生成流程，创建文章时自动填充配置。</p>
+            </div>
+          </div>
+          <div class="feature-row">
+            <span class="feature-icon">📚</span>
+            <div>
+              <h3>参考文献绑定</h3>
+              <p>从文献库绑定参考文献，导出时自动附加到文章末尾，格式规范，无需手动整理。</p>
+            </div>
+          </div>
+          <div class="feature-row">
+            <span class="feature-icon">📤</span>
+            <div>
+              <h3>多格式导出</h3>
+              <p>支持 Word（.docx）、HTML、Markdown、纯文本导出，格式与编辑器一致，参考文献自动附加。</p>
             </div>
           </div>
         </div>
       </section>
 
-      <!-- 内容管理 -->
+      <!-- 平台与管理 -->
       <section class="section">
-        <h2 class="section-label">内容管理</h2>
+        <h2 class="section-label">平台与管理</h2>
         <div class="feature-rows">
+          <div class="feature-row">
+            <span class="feature-icon">🎯</span>
+            <div>
+              <h3>多平台风格适配</h3>
+              <p>适配微信公众号、知乎、小红书等平台风格，自动调整语域、篇幅和表达方式，一篇内容多场景复用。</p>
+            </div>
+          </div>
           <div class="feature-row">
             <span class="feature-icon">📄</span>
             <div>
@@ -119,17 +133,17 @@
             </div>
           </div>
           <div class="feature-row">
-            <span class="feature-icon">◎</span>
+            <span class="feature-icon">📦</span>
             <div>
-              <h3>知识库</h3>
-              <p>自建知识内容与学科包内容严格隔离，更新学科包不影响你积累的私有数据。本地存储，离线可用。</p>
+              <h3>学科包扩展</h3>
+              <p>按专业方向独立购买学科包，内容本地存储、离线可用，更新学科包不影响你的原有数据。</p>
             </div>
           </div>
           <div class="feature-row">
-            <span class="feature-icon">✏</span>
+            <span class="feature-icon">📊</span>
             <div>
-              <h3>发布管理</h3>
-              <p>管理内容的发布状态，追踪已发布与草稿内容，使下系统化运营和后续复用。</p>
+              <h3>智能模型路由</h3>
+              <p>根据任务类型自动选择最优 LLM 模型，写作、改写、检测等不同环节匹配最适合的模型能力。</p>
             </div>
           </div>
         </div>

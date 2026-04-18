@@ -60,7 +60,7 @@
 
       <!-- 绘图包 -->
       <section v-if="drawingPackList.length" class="section">
-        <h2 class="section__title">MedPic 绘图包</h2>
+        <h2 class="section__title">绘图扩展包</h2>
         <div class="download-grid">
           <div v-for="d in drawingPackList" :key="d.id" class="download-item">
             <div class="download-item__name">{{ d.name }}</div>
